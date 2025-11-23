@@ -1,26 +1,28 @@
 # 🏨 Hotelaria_UnB_TP1
 
 Projeto acadêmico em **C++**, desenvolvido na Universidade de Brasília (UnB), com foco em **Programação Orientada a
-Objetos (POO)** e persistência de dados com **SQLite**.
+Objetos (POO)**, **arquitetura modular**, **persistência com SQLite** e **documentação automatizada com Doxygen**.
 
 O sistema simula um **gerenciador de hotel**, permitindo:
 
 - Cadastro e login de **hóspedes** e **gerentes**
-- Registro e gerenciamento de **quartos**, **reservas** e **hotéis**
+- Gerenciamento de **quartos**, **reservas**, **solicitações** e **hotéis**
 - Validação de dados diretamente nas classes de domínio
 - Navegação por menus interativos via **interface de terminal (CLI)**
+- Separação por pacotes funcionais: apresentação, serviço, persistência e fábrica
 
 ---
 
-## 🚀 Atualizações Recentes
+## 🚀 Funcionalidades Atuais
 
-- Interface de terminal funcional com menus dinâmicos
-- Persistência com SQLite (`hotel.db`)
-- Criação, login, leitura e exclusão de gerentes
-- Fluxo completo para hóspedes com opções de hospedagem
+- Interface de terminal com menus dinâmicos
+- CRUD completo de gerentes
+- Fluxo de hóspedes com registro de hospedagem e consulta de status
 - Validação embutida nos domínios com tratamento de exceções
-- Remoção das classes de validação externas (`validadores_abstratos`)
-- 🔄 Função de atualização de gerente em desenvolvimento
+- Persistência local com banco SQLite (`hotel.db`)
+- Documentação gerada automaticamente em `docs/html` e `docs/latex`
+- Script `gerar_documentacao.bat` para automatizar a geração da documentação
+- Modo de desenvolvimento com acesso rápido via `SistemaHacker`
 
 ---
 
@@ -39,6 +41,22 @@ O sistema simula um **gerenciador de hotel**, permitindo:
 | 9️⃣   | Criar Solicitação   | Interface para registrar interesse em hospedagem     |
 | 🔟    | Ver Status          | Consulta ao status da solicitação feita              |
 | 🔜    | Atualizar Gerente   | (Em desenvolvimento) Edição de dados do gerente      |
+
+---
+
+## 🧭 Fluxo de Navegação
+
+- Gerente:
+    - Login via autenticação persistente
+    - Acesso à central de serviços
+    - CRUD de gerentes, hotéis, quartos, reservas
+    - Avaliação de solicitações de hospedagem
+- Hóspede:
+    - Registro de solicitação de hospedagem
+    - Consulta de status por email
+- Hacker:
+    - Criação automática de gerente para testes
+    - Acesso direto à central de serviços
 
 ---
 
@@ -84,25 +102,166 @@ O sistema simula um **gerenciador de hotel**, permitindo:
 
 ## 📂 Estrutura do Projeto
 
-├── include/
-│ ├── entidades/
-│ ├── dominios/
-│ ├── sistema/
-│ ├── utilitarios/
-├── src/
-│ ├── sistema/
-│ ├── persistencias/
-│ ├── servicos/
-│ ├── entidades/
-│ ├── dominios/
-├── libs/
-│ ├── sqlite/
-│ │ └── sqlite3.h
-│ ├── extern/
-│ │ └── libsqlite3.a
-├── tests/
-├── imagens/
-├── README.md
+Hotelaria_UnB_TP1/
+├── docs/ # Documentação gerada (HTML/LaTeX/Imagens)
+├── include/ # Headers (.hpp) da aplicação
+│ ├── HACKER/
+│ │ └── SistemaHacker.hpp
+│ └── sistema/
+│ ├── banco/
+│ │ └── BancoDeDados.hpp
+│ ├── objetos/
+│ │ ├── dominios/ # Tipos de valor com validação (Nome, Email, Senha, etc.)
+│ │ ├── entidades/ # Pessoa, Gerente, Hospede, Hotel, Quarto, Reserva, SolicitacaoHospedagem
+│ │ ├── entidades_dto/ # DTOs correspondentes
+│ │ └── sub_sistema/
+│ │ ├── ControladoraPersistenciaSolicitacaoHospedagem.hpp
+│ │ ├── pacote_acesso/
+│ │ │ ├── InterfaceApresentacaoAcessoGerente.hpp
+│ │ │ ├── InterfaceApresentacaoAcessoHospede.hpp
+│ │ │ └── modulo_apresentacao_acesso/
+│ │ │ ├── ControladoraApresentacaoAcessoGerente.hpp
+│ │ │ └── ControladoraApresentacaoAcessoHospede.hpp
+│ │ ├── pacote_autenticavel/
+│ │ │ ├── InterfaceApresentacaoAutenticavel.hpp
+│ │ │ ├── InterfacePersistenciaAutenticavel.hpp
+│ │ │ ├── InterfaceServicoAutenticavel.hpp
+│ │ │ ├── modulo_apresentacao_autenticavel/
+│ │ │ │ └── ControladoraApresentacaoAutenticavel.hpp
+│ │ │ ├── modulo_persistencia_autenticavel/
+│ │ │ │ └── ControladoraPersistenciaAutenticavel.hpp
+│ │ │ └── modulo_servico_autenticavel/
+│ │ │ └── ControladoraServicoAutenticavel.hpp
+│ │ ├── pacote_fabrica/
+│ │ │ ├── InterfaceFabricaGerenciavel.hpp
+│ │ │ └── modulo_apresentacao_fabrica/
+│ │ │ └── FabricaGerenciavel.hpp
+│ │ ├── pacote_gerente/
+│ │ │ ├── InterfaceApresentacaoGerente.hpp
+│ │ │ ├── InterfacePersistenciaGerente.hpp
+│ │ │ ├── InterfaceServicoGerente.hpp
+│ │ │ ├── modulo_apresentacao_gerente/
+│ │ │ │ └── ControladoraApresentacaoGerente.hpp
+│ │ │ ├── modulo_persistencia_gerente/
+│ │ │ │ └── ControladoraPersistenciaGerente.hpp
+│ │ │ └── modulo_servico_gerente/
+│ │ │ └── ControladoraServicoGerente.hpp
+│ │ ├── pacote_hospede/
+│ │ │ ├── InterfaceApresentacaoHospede.hpp
+│ │ │ ├── InterfacePersistenciaHospede.hpp
+│ │ │ ├── InterfaceServicoHospede.hpp
+│ │ │ ├── modulo_apresentacao_hospede/
+│ │ │ │ └── ControladoraApresentacaoHospede.hpp
+│ │ │ ├── modulo_persistencia_hospede/
+│ │ │ │ └── ControladoraPersistenciaHospede.hpp
+│ │ │ └── modulo_servico_hospede/
+│ │ │ └── ControladoraServicoHospede.hpp
+│ │ ├── pacote_hotel/
+│ │ │ ├── InterfaceApresentacaoHotel.hpp
+│ │ │ ├── InterfacePersistenciaHotel.hpp
+│ │ │ ├── InterfaceServicoHotel.hpp
+│ │ │ ├── modulo_apresentacao_hotel/
+│ │ │ │ └── ControladoraApresentacaoHotel.hpp
+│ │ │ ├── modulo_persistencia_hotel/
+│ │ │ │ └── ControladoraPersistenciaHotel.hpp
+│ │ │ └── modulo_servico_hotel/
+│ │ │ └── ControladoraServicoHotel.hpp
+│ │ ├── pacote_quarto/
+│ │ │ ├── InterfaceApresentacaoQuarto.hpp
+│ │ │ ├── InterfacePersistenciaQuarto.hpp
+│ │ │ ├── InterfaceServicoQuarto.hpp
+│ │ │ ├── modulo_apresentacao_quarto/
+│ │ │ │ └── ControladoraApresentacaoQuarto.hpp
+│ │ │ ├── modulo_persistencia_quarto/
+│ │ │ │ └── ControladoraPersistenciaQuarto.hpp
+│ │ │ └── modulo_servico_quarto/
+│ │ │ └── ControladoraServicoQuarto.hpp
+│ │ └── pacote_reserva/
+│ │ ├── InterfaceApresentacaoReserva.hpp
+│ │ ├── InterfacePersistenciaReserva.hpp
+│ │ ├── InterfaceServicoReserva.hpp
+│ │ ├── modulo_apresentacao_reserva/
+│ │ │ └── ControladoraApresentacaoReserva.hpp
+│ │ ├── modulo_persistencia_reserva/
+│ │ │ └── ControladoraPersistenciaReserva.hpp
+│ │ └── modulo_servico_reserva/
+│ │ └── ControladoraServicoReserva.hpp
+│ └── utilitarios/
+│ ├── enum/ # Modos.hpp
+│ ├── Utils.hpp
+│ ├── AplicacaoSistema.hpp
+│ ├── Sistema.hpp
+│ ├── SistemaSessao.hpp
+│ └── Versao.hpp
+├── libs/ # Bibliotecas e componentes reutilizáveis
+│ ├── formato/ # Formato.cpp/.hpp
+│ ├── io/ # IO.cpp/.hpp
+│ ├── menu/ # Menu, MenuCRUD, MenuItem, ExibirMenu
+│ ├── sqlite/ # sqlite3.c/.h (embutido)
+│ ├── tabela/ # Atributo, Linha, Tabela, TamanhoAtributo
+│ └── teste/ # SmokeTeste, InterfaceDeTestes
+├── src/ # Implementações (.cpp) — espelha include/ quando aplicável
+│ ├── HACKER/SistemaHacker.cpp
+│ └── sistema/sub_sistema/
+│ ├── ControladoraPersistenciaSolicitacaoHospedagem.cpp
+│ ├── pacote_acesso/
+│ │ └── modulo_apresentacao_acesso/
+│ │ ├── ControladoraApresentacaoAcessoGerente.cpp
+│ │ └── ControladoraApresentacaoAcessoHospede.cpp
+│ ├── pacote_autenticavel/
+│ │ ├── modulo_apresentacao_autenticavel/
+│ │ │ └── ControladoraApresentacaoAutenticavel.cpp
+│ │ ├── modulo_persistencia_autenticavel/
+│ │ │ └── ControladoraPersistenciaAutenticavel.cpp
+│ │ └── modulo_servico_autenticavel/
+│ │ └── ControladoraServicoAutenticavel.cpp
+│ ├── pacote_fabrica/
+│ │ └── modulo_apresentacao_fabrica/
+│ │ └── FabricaGerenciavel.cpp
+│ ├── pacote_gerente/
+│ │ ├── modulo_apresentacao_gerente/
+│ │ │ └── ControladoraApresentacaoGerente.cpp
+│ │ ├── modulo_persistencia_gerente/
+│ │ │ └── ControladoraPersistenciaGerente.cpp
+│ │ └── modulo_servico_gerente/
+│ │ └── ControladoraServicoGerente.cpp
+│ ├── pacote_hospede/
+│ │ ├── modulo_apresentacao_hospede/
+│ │ │ └── ControladoraApresentacaoHospede.cpp
+│ │ ├── modulo_persistencia_hospede/
+│ │ │ └── ControladoraPersistenciaHospede.cpp
+│ │ └── modulo_servico_hospede/
+│ │ └── ControladoraServicoHospede.cpp
+│ ├── pacote_hotel/
+│ │ ├── modulo_apresentacao_hotel/
+│ │ │ └── ControladoraApresentacaoHotel.cpp
+│ │ ├── modulo_persistencia_hotel/
+│ │ │ └── ControladoraPersistenciaHotel.cpp
+│ │ └── modulo_servico_hotel/
+│ │ └── ControladoraServicoHotel.cpp
+│ ├── pacote_quarto/
+│ │ ├── modulo_apresentacao_quarto/
+│ │ │ └── ControladoraApresentacaoQuarto.cpp
+│ │ ├── modulo_persistencia_quarto/
+│ │ │ └── ControladoraPersistenciaQuarto.cpp
+│ │ └── modulo_servico_quarto/
+│ │ └── ControladoraServicoQuarto.cpp
+│ └── pacote_reserva/
+│ ├── modulo_apresentacao_reserva/
+│ │ └── ControladoraApresentacaoReserva.cpp
+│ ├── modulo_persistencia_reserva/
+│ │ └── ControladoraPersistenciaReserva.cpp
+│ └── modulo_servico_reserva/
+│ └── ControladoraServicoReserva.cpp
+├── meta/ # Tema Doxygen Awesome e customizações (CSS/JS/header)
+├── testes/
+│ ├── testes_dominios/ # Testes por domínio
+│ └── testes_entidades/ # Testes por entidade
+├── Doxyfile
+├── gerar_documentacao.bat
+└── README.md
+
+
 
 ---
 

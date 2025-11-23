@@ -7,7 +7,6 @@
 #include "InterfaceApresentacaoHospede.hpp"
 
 namespace Hotelaria {
-
     void ControladoraApresentacaoAcessoHospede::exibirMenu() {
         bool executando = true;
 
@@ -49,14 +48,14 @@ namespace Hotelaria {
         while (executando) {
             Formato::TituloEmCaixa("Criar Solicitacao de Hospedagem");
 
-            IO::Print("Informe o Email: ");
-            string email = IO::LerLinha();
+            IO::Print("Insira o codigo do hospede : ");
+            string hospede_id = IO::LerLinha();
 
             IO::Print("Codigo do hotel desejado: ");
-            string idHotel = IO::LerLinha();
+            string hotel_id = IO::LerLinha();
 
             IO::Print("Codigo do quarto desejado: ");
-            string idQuarto = IO::LerLinha();
+            string quarto_id = IO::LerLinha();
 
             IO::Print("Data de chegada (dd/mm/aaaa): ");
             string chegadaStr = IO::LerLinha();
@@ -64,19 +63,19 @@ namespace Hotelaria {
             IO::Print("Data de partida (dd/mm/aaaa): ");
             string partidaStr = IO::LerLinha();
 
-            IO::Println(idHotel.length() + " e " + idQuarto.length());
+            IO::Println(hotel_id.length() + " e " + quarto_id.length());
             try {
                 Data chegada(chegadaStr);
                 Data partida(partidaStr);
 
                 SolicitacaoHospedagem solicitacao(
-                    stoi(email),
-                    stoi(idHotel),
-                    stoi(idQuarto),
                     chegada,
                     partida,
                     StatusSolicitacaoHospedagem::PENDENTE,
-                    ""
+                    "",
+                    stoi(hospede_id),
+                    stoi(hotel_id),
+                    stoi(quarto_id)
                 );
 
                 ControladoraPersistenciaSolicitacaoHospedagem::salvar(solicitacao);

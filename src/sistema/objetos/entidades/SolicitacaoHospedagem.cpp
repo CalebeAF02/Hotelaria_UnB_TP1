@@ -6,33 +6,33 @@
 
 namespace Hotelaria {
     SolicitacaoHospedagem::SolicitacaoHospedagem(
-        const int &hospedeId,
-        const int &hotelId,
-        const int &quartoId,
         const Data &chegada,
         const Data &partida,
         const StatusSolicitacaoHospedagem status,
-        const string &motivoRecusa
+        const string &motivoRecusa,
+        const int &hospedeId,
+        const int &hotelId,
+        const int &quartoId
     ) {
-        setHospedeId(hospedeId);
-        setHotelId(hotelId);
-        setQuartoId(quartoId);
         setChegada(chegada);
         setPartida(partida);
         setStatus(status);
         setMotivoRecusa(motivoRecusa);
+        setHospedeId(hospedeId);
+        setHotelId(hotelId);
+        setQuartoId(quartoId);
     }
 
     SolicitacaoHospedagem::SolicitacaoHospedagem(SolicitacaoHospedagemDTO &solicitacao_hospedagem_dto) {
-        setHospedeId(solicitacao_hospedagem_dto.getHospedeId());
-        setHotelId(solicitacao_hospedagem_dto.getHotelId());
-        setQuartoId(solicitacao_hospedagem_dto.getQuartoId());
-
         setChegada(Data(solicitacao_hospedagem_dto.getChegada()));
         setPartida(Data(solicitacao_hospedagem_dto.getPartida()));
         setStatus(StatusSolicitacaoHospedagem(solicitacao_hospedagem_dto.getStatus()));
 
         setMotivoRecusa(solicitacao_hospedagem_dto.getMotivoRecusa());
+
+        setHospedeId(solicitacao_hospedagem_dto.getHospedeId());
+        setHotelId(solicitacao_hospedagem_dto.getHotelId());
+        setQuartoId(solicitacao_hospedagem_dto.getQuartoId());
     };
 
     void SolicitacaoHospedagem::setHospedeId(const int &valor) {

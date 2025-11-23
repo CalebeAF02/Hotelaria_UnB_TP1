@@ -12,7 +12,7 @@ RECURSIVE              = YES
 EXCLUDE_PATTERNS       = */cmake-build-debug/* */CMakeFiles/*
 
 USE_MDFILE_AS_MAINPAGE = README.md
-INPUT += README.md AUTHORS.md 
+INPUT += README.md AUTHORS.md CHANGELOG.md
 
 # Extração de membros
 EXTRACT_ALL            = YES

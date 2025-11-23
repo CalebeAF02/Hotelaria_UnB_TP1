@@ -60,26 +60,26 @@ namespace Hotelaria {
         sqlite3_close(db);
     }
 
-    vector<SolicitacaoHospedagem> ControladoraPersistenciaSolicitacaoHospedagem::buscarPorEmail(const string &email) {
+    vector<SolicitacaoHospedagem> ControladoraPersistenciaSolicitacaoHospedagem::buscarPorEmail(const string &id) {
         sqlite3 *db;
         sqlite3_open(DB_PATH, &db);
 
         const char *sql = R"(
-        SELECT codigo, id_hotel, id_quarto, chegada, partida, status, motivo_recusa
+        SELECT id, chegada, partida, status, motivo_recusa, hospede_id, hotel_id, quarto_id,
         FROM solicitacoes_hospedagem
-        WHERE email_hospede = ?;
+        WHERE hospede_id = ?;
     )";
 
         sqlite3_stmt *stmt;
         sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
-        sqlite3_bind_text(stmt, 1, email.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 1, id.c_str(), -1, SQLITE_STATIC);
 
         vector<SolicitacaoHospedagem> lista;
 
         while (sqlite3_step(stmt) == SQLITE_ROW) {
-            string codigo = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
-            string hotelId = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
-            string quartoId = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+            string hospede_id = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
+            string hotel_id = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+            string quarto_id = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
             string chegadaStr = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
             string partidaStr = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4));
             StatusSolicitacaoHospedagem status = EnumConversor::InteiroParaStatusSolicitacaoHospedagem(
@@ -87,13 +87,13 @@ namespace Hotelaria {
             string motivo = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 6));
 
             lista.emplace_back(
-                stoi(email),
-                stoi(hotelId),
-                stoi(quartoId),
                 Data(chegadaStr),
                 Data(partidaStr),
                 status,
-                motivo
+                motivo,
+                stoi(hospede_id),
+                stoi(hotel_id),
+                stoi(quarto_id)
             );
         }
 
@@ -107,7 +107,7 @@ namespace Hotelaria {
         sqlite3_open(DB_PATH, &db);
 
         const char *sql = R"(
-        SELECT codigo, email_hospede, id_hotel, id_quarto, chegada, partida, status, motivo_recusa
+        SELECT id, chegada, partida, status, motivo_recusa, email_hospede, id_hotel, id_quarto,
         FROM solicitacoes_hospedagem
         WHERE status = ?;
     )";
@@ -119,24 +119,25 @@ namespace Hotelaria {
         vector<SolicitacaoHospedagem> lista;
 
         while (sqlite3_step(stmt) == SQLITE_ROW) {
-            string codigo = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
-            string email = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
-            string hotelId = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
-            string quartoId = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
-            string chegadaStr = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4));
-            string partidaStr = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 5));
+            string id = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
+            string chegadaStr = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+            string partidaStr = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
             StatusSolicitacaoHospedagem status = EnumConversor::InteiroParaStatusSolicitacaoHospedagem(
-                sqlite3_column_int(stmt, 6));
-            string motivo = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 7));
+                sqlite3_column_int(stmt, 4));
+            string motivo = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4));
+            string hospede_id = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 5));
+            string hotel_id = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 6));
+            string quarto_id = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 7));
 
             lista.emplace_back(
-                stoi(email),
-                stoi(hotelId),
-                stoi(quartoId),
+
                 Data(chegadaStr),
                 Data(partidaStr),
                 status,
-                motivo
+                motivo,
+                stoi(hospede_id),
+                stoi(hotel_id),
+                stoi(quarto_id)
             );
         }
 

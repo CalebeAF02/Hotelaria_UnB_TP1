@@ -16,25 +16,25 @@
 namespace Hotelaria {
     class SolicitacaoHospedagem {
     private:
-        int hospedeId;
-        int hotelId;
-        int quartoId;
         Data chegada;
         Data partida;
         StatusSolicitacaoHospedagem status;
         string motivoRecusa;
+        int hospedeId;
+        int hotelId;
+        int quartoId;
 
     public:
         SolicitacaoHospedagem() = default; // construtor padrao
 
         SolicitacaoHospedagem(
-            const int &hospedeId,
-            const int &hotelId,
-            const int &quartoId,
             const Data &chegada,
             const Data &partida,
             const StatusSolicitacaoHospedagem status,
-            const string &motivoRecusa
+            const string &motivoRecusa,
+            const int &hospedeId,
+            const int &hotelId,
+            const int &quartoId
         );
 
         SolicitacaoHospedagem(SolicitacaoHospedagemDTO &solicitacao_hospedagem_dto);
