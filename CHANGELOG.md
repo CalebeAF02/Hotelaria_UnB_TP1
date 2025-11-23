@@ -5,9 +5,81 @@ Todas as mudanças notáveis neste projeto serão documentadas aqui.
 Este projeto segue o formato [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 e [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+# Histórico de Alterações (Changelog) - Hotelaria_UnB_TP1
+
+Todas as mudanças notáveis neste projeto serão documentadas aqui.  
+Este projeto segue o formato [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
+e [Semantic Versioning](https://semver.org/lang/pt-BR/).
+
 ---
 
-## [Unreleased] - Próximas Alterações
+## [Unreleased]
+
+- Implementar CRUD completo de reservas.
+- Integração com sessão para restringir operações.
+- Exportação de dados para `.csv` ou `.tsv`.
+- Interface gráfica futura (Qt ou Web).
+
+---
+
+## [1.1.4] - 2025-11-23
+
+### Adicionado
+
+- **Feature:** Modelo de documentação definido.
+- **Feature:** Impede o cadastro de Gerente com email duplicado.
+- **Feature:** Verifica se email existe na tabela Gerentes do banco de dados.
+- **Feature:** Implementando DTOs.
+- **Feature:** Método `TentarNovamente` para fluxo de interação.
+- **Feature:** Remoção de gerente (CRUD completo).
+
+### Refatorado
+
+- Refatoração da `SolicitacaoHospedagem` (corrigindo uso de `stoi(email)` e ordem dos parâmetros).
+- Refatoração do `Main` para organização do fluxo principal.
+- Refatoração completa dos objetos e do `sub_sistema`.
+- Mudança conceitual na organização das interfaces e serviços.
+- Refatoração do modo Hacker (autenticação e fluxo).
+- Refatoração de namespaces: `Hotelaria`, `Utils`, `Menu`, `VisualizadorDeTabela`, `Formato`, `IO`, `Teste`.
+- Refatoração de entidades, domínios e DTOs movidos para pasta `objetos`.
+- Refatoração de autenticação (novo modelo).
+- Refatoração de documentação e organização de módulos.
+- Refatoração de nomes de métodos e classes do Console.
+- Refatoração para uso de `PrintMensagem`, `Pergunta`, `SubPergunta`.
+
+### Corrigido
+
+- Correção do laço de execução do sistema.
+- Correção na organização do banco de dados.
+
+### Documentação
+
+- Produção de diagramas de testes e sub_sistemas.
+- Produção de diagramas de classes completos.
+- Documentação com Doxygen.
+- Atualização do README.
+- Diagramas de domínios e entidades (incluindo versão em Mermaid).
+- Remoção de testes de diagramas obsoletos.
+
+### Estilo
+
+- Organização geral do projeto (`.hpp` declarações, `.cpp` implementações).
+- Reformatando código e organização visual.
+- Padronização de estilo em múltiplos módulos.
+
+### Build
+
+- Atualização do Doxyfile.
+- Organização de versão.
+- Integração do Doxygen no fluxo de build.
+
+### Removido
+
+- Remoção da pasta `.idea` do versionamento.
+- Exclusão da pasta de validação principal.
+- Remoção de docs antigos e arquivos de build desnecessários.
+
+---
 
 ### Versao 1.1.3 - 2025-11-09
 
