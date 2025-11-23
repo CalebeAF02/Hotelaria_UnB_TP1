@@ -81,6 +81,8 @@ namespace Hotelaria {
         InterfaceApresentacaoQuarto *getControladoraApresentacaoQuarto();
 
         InterfaceApresentacaoReserva *getControladoraApresentacaoReserva();
+
+        void finalizar();
     };
 }
 

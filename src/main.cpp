@@ -14,7 +14,7 @@ using namespace Hotelaria;
 int main() {
     AplicacaoSistema app;
 
-    app.iniciar(MODOS::MODO_HACKER);
+    app.iniciar(MODOS::MODO_PRODUCAO);
 
     return 0;
 }

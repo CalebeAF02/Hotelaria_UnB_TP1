@@ -46,5 +46,8 @@ namespace Hotelaria {
             }
             sessao.getControladoraApresentacaoAcessoGerente()->exibirMenuGerenciador();
         }
+
+
+        sessao.finalizar();
     }
 }

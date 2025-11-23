@@ -17,6 +17,9 @@ namespace Hotelaria {
         while (executando) {
             exibirMenu();
         }
+
+        SistemaSessao &sessao = SistemaSessao::getInstance();
+        sessao.finalizar();
     }
 
     void Sistema::exibirMenu() {

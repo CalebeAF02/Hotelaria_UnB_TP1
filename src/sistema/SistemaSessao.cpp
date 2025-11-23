@@ -109,4 +109,49 @@ namespace Hotelaria {
     InterfaceApresentacaoReserva *SistemaSessao::getControladoraApresentacaoReserva() {
         return apresentacao_reserva;
     }
+
+
+    void SistemaSessao::finalizar() {
+        if (apresentacao_acesso_gerente) {
+            delete apresentacao_acesso_gerente;
+            apresentacao_acesso_gerente = nullptr;
+        }
+        if (apresentacao_acesso_hospede) {
+            delete apresentacao_acesso_hospede;
+            apresentacao_acesso_hospede = nullptr;
+        }
+        if (apresentacao_autenticavel) {
+            delete apresentacao_autenticavel;
+            apresentacao_autenticavel = nullptr;
+        }
+        if (apresentacao_gerente) {
+            delete apresentacao_gerente;
+            apresentacao_gerente = nullptr;
+        }
+        if (apresentacao_hospede) {
+            delete apresentacao_hospede;
+            apresentacao_hospede = nullptr;
+        }
+        if (apresentacao_hotel) {
+            delete apresentacao_hotel;
+            apresentacao_hotel = nullptr;
+        }
+        if (apresentacao_quarto) {
+            delete apresentacao_quarto;
+            apresentacao_quarto = nullptr;
+        }
+        if (apresentacao_reserva) {
+            delete apresentacao_reserva;
+            apresentacao_reserva = nullptr;
+        }
+
+
+        if (instancia != nullptr) {
+            delete instancia;
+            instancia = nullptr;
+            iniciado = false;
+        }
+
+        IO::Println("Sistema Finalizado ! ");
+    }
 }

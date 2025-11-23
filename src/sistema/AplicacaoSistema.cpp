@@ -36,6 +36,13 @@ namespace Hotelaria {
     }
 
 
+    void AplicacaoSistema::finalizar() {
+        SistemaSessao &sessao = SistemaSessao::getInstance();
+
+        sessao.finalizar();
+    }
+
+
     void AplicacaoSistema::desenhar_logo() {
         const char *logo = R"(   .+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.+"+.
   )                                                                (

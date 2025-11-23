@@ -78,6 +78,8 @@ namespace Hotelaria {
     public:
         void iniciar(MODOS MODO_ATUAL);
 
+        void finalizar();
+
     private:
         void desenhar_logo();
 
