@@ -17,17 +17,21 @@ using namespace std;
 namespace Hotelaria {
     /**
      * @class Gerente
-     * @brief Representa um gerente do sistema de hotelaria.
+     * @brief Classe que representa um gerente no sistema de hotelaria.
      *
-     * Herda de Pessoa e adiciona atributos específicos como ramal e senha.
+     * A classe Gerente herda de Pessoa e adiciona atributos específicos como
+     * ramal e senha para controle de acesso e comunicação interna.
      */
     class Gerente : public Pessoa {
     private:
-        /// Atributos específicos do gerente
-        /// O ramal é o número de contato interno do gerente (ex.: telefone interno)
+        /**
+         * @brief Número de contato interno do gerente (telefone interno).
+         */
         Ramal ramal;
 
-        /// Senha usada pelo gerente para acessar o sistema
+        /**
+         * @brief Senha utilizada pelo gerente para acessar o sistema.
+         */
         Senha senha;
 
     public:
@@ -35,15 +39,15 @@ namespace Hotelaria {
         /// @{
 
         /**
-         * @brief Construtor padrão do gerente.
+         * @brief Construtor padrão.
          *
-         * Cria um gerente com nome e email vazios.
+         * Inicializa um gerente com nome e email vazios.
          */
         Gerente() : Pessoa(Nome(), Email()) {
         };
 
         /**
-         * @brief Construtor completo do gerente.
+         * @brief Construtor completo.
          * @param nomePessoaObj Nome do gerente.
          * @param emailPessoaObj Email do gerente.
          * @param ramal Ramal de contato interno.
@@ -64,31 +68,53 @@ namespace Hotelaria {
         };
         /// @}
 
-        /// @name Métodos de acesso
+        /// @name Métodos Setters
         /// @{
-        /// SETTERS - usados para alterar os valores dos atributos depois que o objeto já foi criado
+
+        /**
+         * @brief Define o nome do gerente.
+         *
+         * @param newNome Novo nome.
+         */
         void setNome(const Nome &newNome);
 
+        /**
+         * @brief Define o email do gerente.
+         *
+         * @param newEmail Novo email.
+         */
         void setEmail(const Email &newEmail);
 
+        /**
+         * @brief Define o ramal do gerente.
+         *
+         * @param newRamal Novo ramal.
+         */
         void setRamal(const Ramal &newRamal);
 
+        /**
+         * @brief Define a senha do gerente.
+         *
+         * @param newSenha Nova senha.
+         */
         void setSenha(const Senha &newSenha);
 
         /// @}
 
-        /// @name Métodos de acesso
+        /// @name Métodos Getters
         /// @{
 
         /**
-         * @brief Retorna o número do ramal como string.
-         * @return Ramal do gerente.
-         */
+        * @brief Retorna o número do ramal como string.
+        *
+        * @return String contendo o ramal.
+        */
         string getRamal() const;
 
         /**
          * @brief Retorna a senha do gerente como string.
-         * @return Senha do gerente.
+         *
+         * @return Senha em formato string.
          */
         string getSenha() const;
 
