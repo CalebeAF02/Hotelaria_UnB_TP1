@@ -1,0 +1,358 @@
+@startuml ArquiteturaCamadas_Hotelaria_TP1_Final
+title Arquitetura em Camadas — Projeto Hotelaria_UnB_TP1 (fiel ao código)
+
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam ranksep 80
+skinparam nodesep 50
+
+' =========================================
+' Núcleo no topo
+' =========================================
+package "Núcleo" {
+  class main
+  class AplicacaoSistema <<controller>>
+  class SistemaSessao
+  class Sistema
+
+  main --> AplicacaoSistema
+  AplicacaoSistema --> SistemaSessao
+  AplicacaoSistema --> Sistema
+  Sistema --> SistemaSessao : utiliza singleton
+}
+
+' =========================================
+' Acesso inicial e escolha de fluxo
+' =========================================
+package "Acesso inicial" {
+  class ControladoraApresentacaoAcessoGerente <<controller>>
+  class ControladoraApresentacaoAcessoHospede <<controller>>
+
+  Sistema --> ControladoraApresentacaoAcessoGerente
+  Sistema --> ControladoraApresentacaoAcessoHospede
+}
+
+' =========================================
+' Fluxo do gerente (apresentação)
+' =========================================
+package "Fluxo gerente (apresentação)" {
+  interface InterfaceApresentacaoGerente <<interface>>
+  class ControladoraApresentacaoGerente <<controller>>
+
+  interface InterfaceApresentacaoHospede <<interface>>
+  class ControladoraApresentacaoHospede <<controller>>
+
+  interface InterfaceApresentacaoHotel <<interface>>
+  class ControladoraApresentacaoHotel <<controller>>
+
+  interface InterfaceApresentacaoQuarto <<interface>>
+  class ControladoraApresentacaoQuarto <<controller>>
+
+  interface InterfaceApresentacaoReserva <<interface>>
+  class ControladoraApresentacaoReserva <<controller>>
+
+  ControladoraApresentacaoAcessoGerente --> InterfaceApresentacaoGerente
+  ControladoraApresentacaoAcessoGerente --> InterfaceApresentacaoHospede
+  ControladoraApresentacaoAcessoGerente --> InterfaceApresentacaoHotel
+
+  InterfaceApresentacaoHotel --> InterfaceApresentacaoQuarto
+  InterfaceApresentacaoQuarto --> InterfaceApresentacaoReserva
+
+  InterfaceApresentacaoGerente <|.. ControladoraApresentacaoGerente
+  InterfaceApresentacaoHospede <|.. ControladoraApresentacaoHospede
+  InterfaceApresentacaoHotel <|.. ControladoraApresentacaoHotel
+  InterfaceApresentacaoQuarto <|.. ControladoraApresentacaoQuarto
+  InterfaceApresentacaoReserva <|.. ControladoraApresentacaoReserva
+
+  SistemaSessao ..> InterfaceApresentacaoGerente : registra/fornece
+  SistemaSessao ..> InterfaceApresentacaoHospede : registra/fornece
+  SistemaSessao ..> InterfaceApresentacaoHotel : registra/fornece
+  SistemaSessao ..> InterfaceApresentacaoQuarto : registra/fornece
+  SistemaSessao ..> InterfaceApresentacaoReserva : registra/fornece
+}
+
+' =========================================
+' Fluxo do hóspede (solicitação de hospedagem)
+' =========================================
+package "Fluxo hóspede (solicitação)" {
+  interface InterfaceApresentacaoHospede <<interface>>
+  class ControladoraApresentacaoHospede <<controller>>
+  class ControladoraPersistenciaSolicitacaoHospedagem <<controller>>
+
+  ControladoraApresentacaoAcessoHospede --> InterfaceApresentacaoHospede
+  InterfaceApresentacaoHospede --> ControladoraPersistenciaSolicitacaoHospedagem : criar/consultar solicitações
+  InterfaceApresentacaoGerente --> ControladoraPersistenciaSolicitacaoHospedagem : avaliar
+}
+
+' =========================================
+' Módulo Autenticação (3 camadas)
+' =========================================
+package "Autenticacao" {
+  interface InterfaceApresentacaoAutenticavel <<interface>>
+  class ControladoraApresentacaoAutenticavel <<controller>>
+
+  interface InterfaceServicoAutenticavel <<interface>>
+  class ControladoraServicoAutenticavel <<controller>>
+
+  interface InterfacePersistenciaAutenticavel <<interface>>
+  class ControladoraPersistenciaAutenticavel <<controller>>
+
+  ControladoraApresentacaoAutenticavel --> InterfaceServicoAutenticavel
+  ControladoraServicoAutenticavel --> InterfacePersistenciaAutenticavel
+
+  InterfaceApresentacaoAutenticavel <|.. ControladoraApresentacaoAutenticavel
+  InterfaceServicoAutenticavel <|.. ControladoraServicoAutenticavel
+  InterfacePersistenciaAutenticavel <|.. ControladoraPersistenciaAutenticavel
+
+  SistemaSessao ..> InterfaceApresentacaoAutenticavel : registra/fornece
+  ControladoraApresentacaoAcessoGerente ..> InterfaceApresentacaoAutenticavel : autenticar gerente
+}
+
+' =========================================
+' Módulo Gerente (3 camadas)
+' =========================================
+package "Gerente" {
+  interface InterfaceServicoGerente <<interface>>
+  class ControladoraServicoGerente <<controller>>
+  interface InterfacePersistenciaGerente <<interface>>
+  class ControladoraPersistenciaGerente <<controller>>
+
+  ControladoraApresentacaoGerente --> InterfaceServicoGerente
+  ControladoraServicoGerente --> InterfacePersistenciaGerente
+
+  InterfaceServicoGerente <|.. ControladoraServicoGerente
+  InterfacePersistenciaGerente <|.. ControladoraPersistenciaGerente
+}
+
+' =========================================
+' Módulo Hospede (3 camadas)
+' =========================================
+package "Hospede" {
+  interface InterfaceServicoHospede <<interface>>
+  class ControladoraServicoHospede <<controller>>
+  interface InterfacePersistenciaHospede <<interface>>
+  class ControladoraPersistenciaHospede <<controller>>
+
+  ControladoraApresentacaoHospede --> InterfaceServicoHospede
+  ControladoraServicoHospede --> InterfacePersistenciaHospede
+
+  InterfaceServicoHospede <|.. ControladoraServicoHospede
+  InterfacePersistenciaHospede <|.. ControladoraPersistenciaHospede
+}
+
+' =========================================
+' Módulo Hotel (3 camadas)
+' =========================================
+package "Hotel" {
+  interface InterfaceServicoHotel <<interface>>
+  class ControladoraServicoHotel <<controller>>
+  interface InterfacePersistenciaHotel <<interface>>
+  class ControladoraPersistenciaHotel <<controller>>
+
+  ControladoraApresentacaoHotel --> InterfaceServicoHotel
+  ControladoraServicoHotel --> InterfacePersistenciaHotel
+
+  InterfaceServicoHotel <|.. ControladoraServicoHotel
+  InterfacePersistenciaHotel <|.. ControladoraPersistenciaHotel
+}
+
+' =========================================
+' Módulo Quarto (3 camadas)
+' =========================================
+package "Quarto" {
+  interface InterfaceServicoQuarto <<interface>>
+  class ControladoraServicoQuarto <<controller>>
+  interface InterfacePersistenciaQuarto <<interface>>
+  class ControladoraPersistenciaQuarto <<controller>>
+
+  ControladoraApresentacaoQuarto --> InterfaceServicoQuarto
+  ControladoraServicoQuarto --> InterfacePersistenciaQuarto
+
+  InterfaceServicoQuarto <|.. ControladoraServicoQuarto
+  InterfacePersistenciaQuarto <|.. ControladoraPersistenciaQuarto
+}
+
+' =========================================
+' Módulo Reserva (3 camadas)
+' =========================================
+package "Reserva" {
+  interface InterfaceServicoReserva <<interface>>
+  class ControladoraServicoReserva <<controller>>
+  interface InterfacePersistenciaReserva <<interface>>
+  class ControladoraPersistenciaReserva <<controller>>
+
+  ControladoraApresentacaoReserva --> InterfaceServicoReserva
+  ControladoraServicoReserva --> InterfacePersistenciaReserva
+
+  InterfaceServicoReserva <|.. ControladoraServicoReserva
+  InterfacePersistenciaReserva <|.. ControladoraPersistenciaReserva
+}
+
+' =========================================
+' Modelo de dados: domínios, entidades e DTOs
+' =========================================
+package "Modelo de dados" {
+  package "Domínios" {
+    class Nome
+    class Email
+    class Senha
+    class Telefone
+    class Endereco
+    class Cartao
+    class Numero
+    class Capacidade
+    class Dinheiro
+    class Data
+    class Codigo
+  }
+  package "Entidades" {
+    class Pessoa
+    class Gerente
+    class Hospede
+    class Hotel
+    class Quarto
+    class Reserva
+    class SolicitacaoHospedagem
+    Pessoa <|-- Gerente
+    Pessoa <|-- Hospede
+  }
+  package "DTOs" {
+    class PessoaDTO
+    class GerenteDTO
+    class HospedeDTO
+    class HotelDTO
+    class QuartoDTO
+    class ReservaDTO
+    class SolicitacaoHospedagemDTO
+  }
+
+  ' Uso de domínios nas entidades
+  Gerente --> Nome
+  Gerente --> Email
+  Gerente --> Ramal
+  Gerente --> Senha
+
+  Hospede --> Nome
+  Hospede --> Email
+  Hospede --> Endereco
+  Hospede --> Cartao
+
+  Hotel --> Nome
+  Hotel --> Endereco
+  Hotel --> Telefone
+  Hotel --> Codigo
+
+  Quarto --> Numero
+  Quarto --> Capacidade
+  Quarto --> Dinheiro
+  Quarto --> Ramal
+
+  Reserva --> Data
+  Reserva --> Dinheiro
+  Reserva --> Codigo
+
+  SolicitacaoHospedagem --> Data
+  SolicitacaoHospedagem --> Codigo
+
+  ' Fluxo DTOs nas camadas
+  InterfacePersistenciaGerente ..> GerenteDTO
+  InterfacePersistenciaHospede ..> HospedeDTO
+  InterfacePersistenciaHotel ..> HotelDTO
+  InterfacePersistenciaQuarto ..> QuartoDTO
+  InterfacePersistenciaReserva ..> ReservaDTO
+  ControladoraPersistenciaSolicitacaoHospedagem ..> SolicitacaoHospedagemDTO
+}
+
+' =========================================
+' Fábrica e utilitários
+' =========================================
+package "Fábrica e utilitários" {
+  interface InterfaceFabricaGerenciavel <<interface>>
+  class FabricaGerenciavel
+  class Versao
+
+  InterfaceFabricaGerenciavel <|.. FabricaGerenciavel
+  AplicacaoSistema ..> FabricaGerenciavel : instancia objetos (conceitual)
+  AplicacaoSistema ..> Versao : exibe versão/compilação
+}
+
+' =========================================
+' Testes
+' =========================================
+package "Testes" {
+  class InterfaceDeTestes
+  class SmokeTeste
+  class TestandoSmoke
+
+  class TesteCapacidade
+  class TesteCartao
+  class TesteCodigo
+  class TesteDinheiro
+  class TesteEmail
+  class TesteEndereco
+  class TesteNome
+  class TesteNumero
+  class TesteRamal
+  class TesteSenha
+  class TesteTelefone
+
+  class TesteGerente
+  class TesteHospede
+  class TesteHotel
+  class TesteQuarto
+  class TesteReserva
+
+  AplicacaoSistema ..> TestandoSmoke : modo SMOKE
+  TestandoSmoke ..> SmokeTeste
+  InterfaceDeTestes <.. TestandoSmoke : relatório
+}
+
+' =========================================
+' Banco de dados
+' =========================================
+package "Banco de Dados" {
+  class BancoDeDados
+
+  ControladoraPersistenciaAutenticavel --> SQLite
+  ControladoraPersistenciaGerente --> SQLite
+  ControladoraPersistenciaHospede --> SQLite
+  ControladoraPersistenciaHotel --> SQLite
+  ControladoraPersistenciaQuarto --> SQLite
+  ControladoraPersistenciaReserva --> SQLite
+  ControladoraPersistenciaSolicitacaoHospedagem --> SQLite
+
+  BancoDeDados ..> SQLite : cria/gerencia tabelas
+}
+
+' =========================================
+' Ligações adicionais coerentes com o código
+' =========================================
+AplicacaoSistema ..> SistemaSessao : registra controladoras
+SistemaSessao ..> ControladoraApresentacaoAcessoGerente
+SistemaSessao ..> ControladoraApresentacaoAcessoHospede
+SistemaSessao ..> ControladoraApresentacaoGerente
+SistemaSessao ..> ControladoraApresentacaoHospede
+SistemaSessao ..> ControladoraApresentacaoHotel
+SistemaSessao ..> ControladoraApresentacaoQuarto
+SistemaSessao ..> ControladoraApresentacaoReserva
+SistemaSessao ..> ControladoraApresentacaoAutenticavel
+
+ControladoraApresentacaoAutenticavel ..> InterfaceServicoAutenticavel
+ControladoraServicoAutenticavel ..> InterfacePersistenciaAutenticavel
+
+ControladoraApresentacaoGerente ..> InterfaceServicoGerente
+ControladoraServicoGerente ..> InterfacePersistenciaGerente
+
+ControladoraApresentacaoHospede ..> InterfaceServicoHospede
+ControladoraServicoHospede ..> InterfacePersistenciaHospede
+
+ControladoraApresentacaoHotel ..> InterfaceServicoHotel
+ControladoraServicoHotel ..> InterfacePersistenciaHotel
+
+ControladoraApresentacaoQuarto ..> InterfaceServicoQuarto
+ControladoraServicoQuarto ..> InterfacePersistenciaQuarto
+
+ControladoraApresentacaoReserva ..> InterfaceServicoReserva
+ControladoraServicoReserva ..> InterfacePersistenciaReserva
+
+@enduml

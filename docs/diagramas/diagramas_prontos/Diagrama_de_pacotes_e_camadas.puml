@@ -1,0 +1,146 @@
+@startuml MapaMental_Hotelaria
+skinparam linetype ortho
+skinparam defaultTextAlignment center
+
+' Núcleo central
+class AplicacaoSistema
+class SistemaSessao
+
+AplicacaoSistema --> SistemaSessao
+
+' SubSistema Autenticavel
+package "Autenticavel" {
+  interface InterfaceApresentacaoAutenticavel
+  interface InterfaceServicoAutenticavel
+  interface InterfacePersistenciaAutenticavel
+
+  class ControladoraApresentacaoAutenticavel
+  class ControladoraServicoAutenticavel
+  class ControladoraPersistenciaAutenticavel
+
+  SistemaSessao --> ControladoraApresentacaoAutenticavel
+  ControladoraApresentacaoAutenticavel --> InterfaceApresentacaoAutenticavel
+  ControladoraApresentacaoAutenticavel --> InterfaceServicoAutenticavel
+  ControladoraServicoAutenticavel --> InterfacePersistenciaAutenticavel
+
+  InterfaceApresentacaoAutenticavel <|.. ControladoraApresentacaoAutenticavel
+  InterfaceServicoAutenticavel <|.. ControladoraServicoAutenticavel
+  InterfacePersistenciaAutenticavel <|.. ControladoraPersistenciaAutenticavel
+}
+
+' SubSistema Acesso
+package "Acesso" {
+  interface InterfaceApresentacaoAcessoGerente
+  interface InterfaceApresentacaoAcessoHospede
+
+  class ControladoraApresentacaoAcessoGerente
+  class ControladoraApresentacaoAcessoHospede
+
+  SistemaSessao --> ControladoraApresentacaoAcessoGerente
+  SistemaSessao --> ControladoraApresentacaoAcessoHospede
+
+  InterfaceApresentacaoAcessoGerente <|.. ControladoraApresentacaoAcessoGerente
+  InterfaceApresentacaoAcessoHospede <|.. ControladoraApresentacaoAcessoHospede
+}
+
+' SubSistema Gerente
+package "Gerente" {
+  interface InterfaceApresentacaoGerente
+  interface InterfaceServicoGerente
+  interface InterfacePersistenciaGerente
+
+  class ControladoraApresentacaoGerente
+  class ControladoraServicoGerente
+  class ControladoraPersistenciaGerente
+
+  SistemaSessao --> ControladoraApresentacaoGerente
+  ControladoraApresentacaoGerente --> InterfaceApresentacaoGerente
+  ControladoraApresentacaoGerente --> InterfaceServicoGerente
+  ControladoraServicoGerente --> InterfacePersistenciaGerente
+
+  InterfaceApresentacaoGerente <|.. ControladoraApresentacaoGerente
+  InterfaceServicoGerente <|.. ControladoraServicoGerente
+  InterfacePersistenciaGerente <|.. ControladoraPersistenciaGerente
+}
+
+' SubSistema Hospede
+package "Hospede" {
+  interface InterfaceApresentacaoHospede
+  interface InterfaceServicoHospede
+  interface InterfacePersistenciaHospede
+
+  class ControladoraApresentacaoHospede
+  class ControladoraServicoHospede
+  class ControladoraPersistenciaHospede
+
+  SistemaSessao --> ControladoraApresentacaoHospede
+  ControladoraApresentacaoHospede --> InterfaceApresentacaoHospede
+  ControladoraApresentacaoHospede --> InterfaceServicoHospede
+  ControladoraServicoHospede --> InterfacePersistenciaHospede
+
+  InterfaceApresentacaoHospede <|.. ControladoraApresentacaoHospede
+  InterfaceServicoHospede <|.. ControladoraServicoHospede
+  InterfacePersistenciaHospede <|.. ControladoraPersistenciaHospede
+}
+
+' SubSistema Hotel
+package "Hotel" {
+  interface InterfaceApresentacaoHotel
+  interface InterfaceServicoHotel
+  interface InterfacePersistenciaHotel
+
+  class ControladoraApresentacaoHotel
+  class ControladoraServicoHotel
+  class ControladoraPersistenciaHotel
+
+  SistemaSessao --> ControladoraApresentacaoHotel
+  ControladoraApresentacaoHotel --> InterfaceApresentacaoHotel
+  ControladoraApresentacaoHotel --> InterfaceServicoHotel
+  ControladoraServicoHotel --> InterfacePersistenciaHotel
+
+  InterfaceApresentacaoHotel <|.. ControladoraApresentacaoHotel
+  InterfaceServicoHotel <|.. ControladoraServicoHotel
+  InterfacePersistenciaHotel <|.. ControladoraPersistenciaHotel
+}
+
+' SubSistema Quarto
+package "Quarto" {
+  interface InterfaceApresentacaoQuarto
+  interface InterfaceServicoQuarto
+  interface InterfacePersistenciaQuarto
+
+  class ControladoraApresentacaoQuarto
+  class ControladoraServicoQuarto
+  class ControladoraPersistenciaQuarto
+
+  SistemaSessao --> ControladoraApresentacaoQuarto
+  ControladoraApresentacaoQuarto --> InterfaceApresentacaoQuarto
+  ControladoraApresentacaoQuarto --> InterfaceServicoQuarto
+  ControladoraServicoQuarto --> InterfacePersistenciaQuarto
+
+  InterfaceApresentacaoQuarto <|.. ControladoraApresentacaoQuarto
+  InterfaceServicoQuarto <|.. ControladoraServicoQuarto
+  InterfacePersistenciaQuarto <|.. ControladoraPersistenciaQuarto
+}
+
+' SubSistema Reserva
+package "Reserva" {
+  interface InterfaceApresentacaoReserva
+  interface InterfaceServicoReserva
+  interface InterfacePersistenciaReserva
+
+  class ControladoraApresentacaoReserva
+  class ControladoraServicoReserva
+  class ControladoraPersistenciaReserva
+
+  SistemaSessao --> ControladoraApresentacaoReserva
+  ControladoraApresentacaoReserva --> InterfaceApresentacaoReserva
+  ControladoraApresentacaoReserva --> InterfaceServicoReserva
+  ControladoraServicoReserva --> InterfacePersistenciaReserva
+
+  InterfaceApresentacaoReserva <|.. ControladoraApresentacaoReserva
+  InterfaceServicoReserva <|.. ControladoraServicoReserva
+  InterfacePersistenciaReserva <|.. ControladoraPersistenciaReserva
+}
+
+@enduml

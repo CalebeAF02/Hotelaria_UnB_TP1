@@ -1,0 +1,63 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide circle
+hide empty members
+
+' Domínios (tipos de valor com validação)
+class Nome
+class Endereco
+class Telefone
+class Email
+class Numero
+class Capacidade
+class Ramal
+class Senha
+class Data
+class Codigo
+class Cartao
+class Dinheiro
+
+' Entidades
+class Pessoa {
+  - nome: Nome
+  - cod: Email <<pk>>
+}
+
+class Gerente {
+  - senha: Senha
+}
+
+class Hotel {
+  - nome: Nome
+  - endereco: Endereco
+  - telefone: Telefone
+  - cod: Codigo <<pk>>
+}
+
+class Quarto {
+  - numero: Numero
+  - capacidade: Capacidade
+  - ramal: Ramal <<pk>>
+}
+
+class Hospede {
+  - endereco: Endereco
+  - cartao: Cartao <<pk>>
+}
+
+class Reserva {
+  - chegada: Data
+  - partida: Data
+  - valor: Dinheiro
+  - cod: Codigo <<pk>>
+}
+
+' Relacionamentos e multiplicidades (exemplo típico)
+Pessoa <|-- Gerente
+Gerente "1" -- "1" Hotel : administra
+Hotel "1" -- "1..*" Quarto : possui
+Hotel "1" -- "0..*" Reserva : agrega
+Hospede "1" -- "0..*" Reserva : faz
+Quarto "1" -- "0..*" Reserva : aloca
+
+@enduml

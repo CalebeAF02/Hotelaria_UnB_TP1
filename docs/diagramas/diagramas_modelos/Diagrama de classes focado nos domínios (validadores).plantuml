@@ -1,0 +1,24 @@
+@startuml
+hide empty members
+
+class Dominio <<abstract>> {
+  +set(valor): void
+  +get(): string
+  ..contrato..
+  ' set lança exceção se formato inválido
+}
+
+Dominio <|-- Nome
+Dominio <|-- Endereco
+Dominio <|-- Telefone
+Dominio <|-- Email
+Dominio <|-- Numero
+Dominio <|-- Capacidade
+Dominio <|-- Ramal
+Dominio <|-- Senha
+Dominio <|-- Data
+Dominio <|-- Codigo
+Dominio <|-- Cartao
+Dominio <|-- Dinheiro
+
+@enduml

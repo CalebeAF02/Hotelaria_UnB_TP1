@@ -1,0 +1,30 @@
+@startuml
+actor Gerente as G
+participant "UI Reserva" as UI
+participant "IServicoReserva\n(ControladoraServicoReserva)" as S
+participant "PersistenciaReserva\n(DAO)" as DAO
+database "SQLite" as DB
+
+G -> UI : criarReserva(hotelId, quartoId, hospedeId, chegada, partida)
+UI -> S : solicitarCriacaoReserva(dto)
+
+S -> DAO : listarReservasPorQuarto(quartoId)
+DAO -> DB : SELECT * FROM reservas WHERE quarto_id = ?
+DB --> DAO : listaReservasExistentes
+DAO --> S : listaReservasExistentes
+
+S -> S : validarConflitoDatas(lista, chegada, partida)\n(retorna OK se não há overlap)
+
+alt Sem conflito
+  S -> DAO : inserirReserva(dto)
+  DAO -> DB : INSERT INTO reservas (...)
+  DB --> DAO : OK (id gerado)
+  DAO --> S : OK
+  S --> UI : sucesso(id)
+else Conflito detectado
+  S --> UI : erro("Conflito de reserva para o período solicitado")
+end
+
+UI --> G : feedback ao usuário
+
+@enduml

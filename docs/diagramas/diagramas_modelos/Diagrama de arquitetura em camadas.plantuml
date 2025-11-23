@@ -1,0 +1,61 @@
+@startuml
+skinparam rectangle {
+  BackgroundColor #f9f9f9
+  BorderColor #555555
+}
+skinparam packageStyle rectangle
+
+package "Apresentacao" {
+  rectangle "ControladoraApresentacaoGerente\n(IU + Validacao)" as UI_G
+  rectangle "ControladoraApresentacaoHotel\n(IU + Validacao)" as UI_H
+  rectangle "ControladoraApresentacaoQuarto\n(IU + Validacao)" as UI_Q
+  rectangle "ControladoraApresentacaoReserva\n(IU + Validacao)" as UI_R
+  rectangle "ControladoraApresentacaoHospede\n(IU + Validacao)" as UI_C
+}
+
+package "Servico" {
+  package "Interfaces (Abstratas)" {
+    interface IServicoGerente
+    interface IServicoHotel
+    interface IServicoQuarto
+    interface IServicoReserva
+    interface IServicoHospede
+  }
+
+  package "Controladoras" {
+    rectangle "ControladoraServicoGerente" as S_G
+    rectangle "ControladoraServicoHotel" as S_H
+    rectangle "ControladoraServicoQuarto" as S_Q
+    rectangle "ControladoraServicoReserva" as S_R
+    rectangle "ControladoraServicoHospede" as S_C
+  }
+
+  package "Armazenamento" {
+    rectangle "BD SQLite\n(tabelas: gerentes, hoteis, quartos, reservas, hospedes)" as DB
+    rectangle "Persistencias\n(DAO/Repository)" as DAO
+  }
+}
+
+' Dependências da camada de apresentação para serviços (via interfaces)
+UI_G ..> IServicoGerente
+UI_H ..> IServicoHotel
+UI_Q ..> IServicoQuarto
+UI_R ..> IServicoReserva
+UI_C ..> IServicoHospede
+
+' Implementações das interfaces
+IServicoGerente <.. S_G
+IServicoHotel <.. S_H
+IServicoQuarto <.. S_Q
+IServicoReserva <.. S_R
+IServicoHospede <.. S_C
+
+' Serviços acessam persistências e banco
+S_G ..> DAO
+S_H ..> DAO
+S_Q ..> DAO
+S_R ..> DAO
+S_C ..> DAO
+DAO ..> DB
+
+@enduml
