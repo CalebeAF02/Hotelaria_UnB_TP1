@@ -19,11 +19,12 @@ namespace Hotelaria {
         Capacidade capacidade;
         Dinheiro diaria;
         Ramal ramal;
+        int hotel_id;
 
     public:
         Quarto() = default;
 
-        Quarto(Numero numero, Capacidade capacidade, Dinheiro diaria, Ramal ramal);
+        Quarto(Numero numero, Capacidade capacidade, Dinheiro diaria, Ramal ramal, int hotel_id);
 
         Quarto(QuartoDTO &quarto_dto);
 
@@ -35,6 +36,8 @@ namespace Hotelaria {
 
         void setRamal(const Ramal &newRamal);
 
+        void setHotelID(const int hotel_id);
+
         string getNumero() const;
 
         int getCapacidade() const;
@@ -42,6 +45,8 @@ namespace Hotelaria {
         int getDiaria() const;
 
         string getRamal() const;
+
+        int getHotelID() const;
     };
 }
 

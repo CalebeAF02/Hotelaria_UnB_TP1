@@ -6,11 +6,11 @@
 
 namespace Hotelaria {
     int GerenteDTO::getId() const {
-        return id_gerente;
+        return id;
     }
 
-    void GerenteDTO::setGerenteId(int valor) {
-        this->id_gerente = valor;
+    void GerenteDTO::setId(int valor) {
+        this->id = valor;
     }
 
     string GerenteDTO::getNome() const {

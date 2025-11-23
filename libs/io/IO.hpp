@@ -29,6 +29,10 @@ namespace IO {
 
     // Usaremos para imprimir mensagens na mesma linha
     void Print(const string &mensagem);
+
+    void Println(string mensagem, string valor);
+
+    void Println(string mensagem, int valor);
 };
 
 #endif //Hotelaria_UnB_TP1_CONSOLEIO_HPP

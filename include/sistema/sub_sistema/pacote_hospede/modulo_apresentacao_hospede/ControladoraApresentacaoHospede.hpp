@@ -36,7 +36,7 @@ namespace Hotelaria {
 
         void exibirMenuCRUD() override;
 
-        void criar() override;
+        bool criar() override;
 
         void listar() override;
 

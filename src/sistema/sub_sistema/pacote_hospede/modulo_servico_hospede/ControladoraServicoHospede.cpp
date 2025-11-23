@@ -5,8 +5,8 @@
 #include "ControladoraServicoHospede.hpp"
 
 namespace Hotelaria {
-    void ControladoraServicoHospede::setControladoraPersistencia(InterfacePersistenciaHospede *p) {
-        this->persistencia = p;
+    void ControladoraServicoHospede::setControladoraPersistencia(InterfacePersistenciaHospede *persistencia) {
+        this->persistencia = persistencia;
     }
 
     bool ControladoraServicoHospede::criar(const Hospede &hospede) {

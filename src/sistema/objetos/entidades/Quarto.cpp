@@ -1,11 +1,12 @@
 #include "Quarto.hpp"
 
 namespace Hotelaria {
-    Quarto::Quarto(Numero numero, Capacidade capacidade, Dinheiro diaria, Ramal ramal) {
+    Quarto::Quarto(Numero numero, Capacidade capacidade, Dinheiro diaria, Ramal ramal, int hotel_id) {
         setNumero(numero);
         setCapacidade(capacidade);
         setDiaria(diaria);
         setRamal(ramal);
+        setHotelID(hotel_id);
     }
 
     Quarto::Quarto(QuartoDTO &quarto_dto) {
@@ -31,6 +32,10 @@ namespace Hotelaria {
         this->ramal = newRamal;
     }
 
+    void Quarto::setHotelID(const int valor) {
+        this->hotel_id = valor;
+    }
+
     string Quarto::getNumero() const {
         return numero.getValor();
     }
@@ -45,5 +50,9 @@ namespace Hotelaria {
 
     string Quarto::getRamal() const {
         return ramal.getValor();
+    }
+
+    int Quarto::getHotelID() const {
+        return hotel_id;
     }
 }

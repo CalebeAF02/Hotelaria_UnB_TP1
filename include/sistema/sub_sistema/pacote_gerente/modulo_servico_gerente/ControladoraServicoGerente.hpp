@@ -37,6 +37,8 @@ namespace Hotelaria {
         vector<GerenteDTO> listarTodos() override;
 
         optional<GerenteDTO> pesquisar(const int &id) override;
+
+        optional<GerenteDTO> pesquisarPorEmail(const string email) override;
     };
 }
 

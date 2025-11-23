@@ -6,7 +6,6 @@
 
 namespace Hotelaria {
     bool ControladoraPersistenciaGerente::inserir(const Gerente &gerente) {
-
         if (existeEmail(gerente.getEmail())) {
             return false;
         }
@@ -75,7 +74,6 @@ namespace Hotelaria {
     }
 
     bool ControladoraPersistenciaGerente::atualizar(const Email &emailAntigo, const Gerente &gerente) {
-
         if (emailAntigo.getValor() != gerente.getEmail()) {
             if (existeEmail(gerente.getEmail())) {
                 return false;
@@ -191,7 +189,7 @@ namespace Hotelaria {
 
 
         sqlite3_stmt *stmt = nullptr;
-        const char *sql = "SELECT id, nome, id, ramal FROM gerentes WHERE id = ? LIMIT 1;";
+        const char *sql = "SELECT id, nome, email, ramal FROM gerentes WHERE id = ? LIMIT 1;";
         int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
         if (rc != SQLITE_OK) {
             sqlite3_finalize(stmt);
@@ -216,7 +214,7 @@ namespace Hotelaria {
     }
 
 
-    optional<GerenteDTO> ControladoraPersistenciaGerente::pesquisarPorEmail(const string &email) {
+    optional<GerenteDTO> ControladoraPersistenciaGerente::pesquisarPorEmail(const string email) {
         optional<GerenteDTO> dto = nullopt;
 
         BancoDeDados banco;
@@ -240,7 +238,7 @@ namespace Hotelaria {
         if (sqlite3_step(stmt) == SQLITE_ROW) {
             int idRes = sqlite3_column_int(stmt, 0);
             string nome = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
-            string ramal = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
+            string ramal = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
 
             dto = GerenteDTO(idRes, nome, email, ramal);
         }
@@ -252,32 +250,6 @@ namespace Hotelaria {
 
 
     bool ControladoraPersistenciaGerente::existeEmail(const string &email) {
-        bool valor = false;
-
-        BancoDeDados banco;
-        if (!banco.abrindoConexao())
-            return false;
-
-        sqlite3 *db = banco.getConexao();
-
-
-        sqlite3_stmt *stmt = nullptr;
-        const char *sql = "SELECT nome FROM gerentes WHERE email = ? LIMIT 1;";
-        int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
-        if (rc != SQLITE_OK) {
-            sqlite3_finalize(stmt);
-            banco.fechandoConexao();
-            return false;
-        }
-
-        sqlite3_bind_text(stmt, 1, email.c_str(), -1, SQLITE_STATIC);
-
-        if (sqlite3_step(stmt) == SQLITE_ROW) {
-            valor = true;
-        }
-
-        sqlite3_finalize(stmt);
-        banco.fechandoConexao();
-        return valor;
+        return BancoDeDados::EXISTE_TABELA_VALOR("gerentes", "email", email);
     }
 }

@@ -4,11 +4,11 @@
 #include "ReservaDTO.hpp"
 
 namespace Hotelaria {
-    int ReservaDTO::getReservaId() const {
+    int ReservaDTO::getId() const {
         return reservaId;
     }
 
-    void ReservaDTO::setReservaId(int valor) {
+    void ReservaDTO::setId(int valor) {
         this->reservaId = valor;
     }
 
@@ -42,5 +42,13 @@ namespace Hotelaria {
 
     void ReservaDTO::setCodigo(const string &valor) {
         this->codigo = valor;
+    }
+
+    int ReservaDTO::getQuartoId() const {
+        return quarto_id;
+    }
+
+    void ReservaDTO::setQuartoId(int valor) {
+        this->quarto_id = valor;
     }
 }

@@ -6,45 +6,99 @@
 
 namespace Hotelaria {
     bool ControladoraPersistenciaHospede::inserir(const Hospede &hospede) {
-        sqlite3 *db;
-        char *mensagemErro = nullptr;
-
-        int rc = sqlite3_open("hotel.db", &db);
-        if (rc != SQLITE_OK) {
-            cerr << "Erro ao abrir banco: " << sqlite3_errmsg(db) << endl;
+        if (existeEmail(hospede.getEmail())) {
             return false;
         }
 
-        string sql = "INSERT INTO gerentes (nome, email, ramal, senha) VALUES ('" +
-                     hospede.getNome() + "', '" + hospede.getEmail() + "', '" + hospede.getEndereco() + "', '" + hospede
-                     .
-                     getCartao()
-                     +
-                     "');";
+        BancoDeDados banco;
+        if (!banco.abrindoConexao())
+            return false;
 
-        rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &mensagemErro);
+        sqlite3 *db = banco.getConexao();
+        sqlite3_stmt *stmt = nullptr;
+        const char *sql = "INSERT INTO hospedes (nome, email, endereco, cartao) VALUES (?, ?, ?, ?);";
+
+        int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
         if (rc != SQLITE_OK) {
-            cerr << "Erro ao inserir gerente: " << mensagemErro << endl;
-            sqlite3_free(mensagemErro);
-            sqlite3_close(db);
+            sqlite3_finalize(stmt);
+            banco.fechandoConexao();
             return false;
         }
-        sqlite3_close(db);
-        return true;
-    }
 
-    bool ControladoraPersistenciaHospede::autenticar(const string &email, const string &senha) {
-        // Ainda não Implementado
-        return true;
+        sqlite3_bind_text(stmt, 1, hospede.getNome().c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 2, hospede.getEmail().c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 3, hospede.getEndereco().c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 4, hospede.getCartao().c_str(), -1, SQLITE_STATIC);
+
+        rc = sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+        banco.fechandoConexao();
+
+        return rc == SQLITE_DONE;
     }
 
     bool ControladoraPersistenciaHospede::atualizar(const Email &emailAntigo, const Hospede &hospede) {
-        // Ainda não Implementado
-        return true;
+        if (emailAntigo.getValor() != hospede.getEmail()) {
+            if (existeEmail(hospede.getEmail())) {
+                return false;
+            }
+        }
+        BancoDeDados banco;
+        if (!banco.abrindoConexao()) {
+            return false;
+        }
+
+        sqlite3 *db = banco.getConexao();
+        sqlite3_stmt *stmt = nullptr;
+
+        const char *sql = "UPDATE hospedes SET nome = ?, email = ?, endereco = ?, cartao = ? WHERE email = ?;";
+
+        int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
+        if (rc != SQLITE_OK) {
+            sqlite3_finalize(stmt);
+            banco.fechandoConexao();
+            return false;
+        }
+
+        sqlite3_bind_text(stmt, 1, hospede.getNome().c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 2, hospede.getEmail().c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 3, hospede.getEndereco().c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 4, hospede.getCartao().c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 5, emailAntigo.getValor().c_str(), -1, SQLITE_STATIC);
+
+
+        rc = sqlite3_step(stmt);
+
+        sqlite3_finalize(stmt);
+        banco.fechandoConexao();
+        return rc == SQLITE_DONE;
     }
 
     bool ControladoraPersistenciaHospede::excluir(const int &id) {
-        // Ainda não Implementado
+        BancoDeDados banco;
+        if (!banco.abrindoConexao())
+            return false;
+
+        sqlite3 *db = banco.getConexao();
+        sqlite3_stmt *stmt = nullptr;
+        const char *sql = "DELETE FROM hospedes WHERE id = ?;";
+        int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
+        if (rc != SQLITE_OK) {
+            sqlite3_finalize(stmt);
+            banco.fechandoConexao();
+            return false;
+        }
+
+        sqlite3_bind_int(stmt, 1, id);;
+        rc = sqlite3_step(stmt);
+        if (rc != SQLITE_DONE) {
+            sqlite3_finalize(stmt);
+            banco.fechandoConexao();
+            return false;
+        }
+
+        sqlite3_finalize(stmt);
+        banco.fechandoConexao();
         return true;
     }
 
@@ -59,7 +113,7 @@ namespace Hotelaria {
 
         sqlite3 *db = banco.getConexao();
         sqlite3_stmt *stmt = nullptr;
-        const char *sql = "SELECT id, nome, email, endereco, cartao FROM gerentes;";
+        const char *sql = "SELECT id, nome, email, endereco, cartao FROM hospedes;";
 
         int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
         if (rc != SQLITE_OK) {
@@ -92,6 +146,77 @@ namespace Hotelaria {
     }
 
     optional<HospedeDTO> ControladoraPersistenciaHospede::pesquisar(const int &id) {
-        return nullopt;
+        optional<HospedeDTO> dto = nullopt;
+
+        BancoDeDados banco;
+        if (!banco.abrindoConexao())
+            return nullopt;
+
+        sqlite3 *db = banco.getConexao();
+
+
+        sqlite3_stmt *stmt = nullptr;
+        const char *sql = "SELECT id, nome, email, endereco, cartao FROM hospedes WHERE id = ? LIMIT 1;";
+        int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
+        if (rc != SQLITE_OK) {
+            sqlite3_finalize(stmt);
+            banco.fechandoConexao();
+            return nullopt;
+        }
+
+        sqlite3_bind_int(stmt, 1, id);
+
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            int idRes = sqlite3_column_int(stmt, 0);
+            string nome = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+            string email = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+            string endereco = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
+            string cartao = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4));
+
+            dto = HospedeDTO(idRes, nome, email, endereco, cartao);
+        }
+
+        sqlite3_finalize(stmt);
+        banco.fechandoConexao();
+        return dto;
+    }
+
+    optional<HospedeDTO> ControladoraPersistenciaHospede::pesquisarPorEmail(const string email) {
+        optional<HospedeDTO> dto = nullopt;
+
+        BancoDeDados banco;
+        if (!banco.abrindoConexao())
+            return nullopt;
+
+        sqlite3 *db = banco.getConexao();
+
+
+        sqlite3_stmt *stmt = nullptr;
+        const char *sql = "SELECT id, nome, endereco, cartao FROM hospedes WHERE email = ? LIMIT 1;";
+        int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
+        if (rc != SQLITE_OK) {
+            sqlite3_finalize(stmt);
+            banco.fechandoConexao();
+            return nullopt;
+        }
+
+        sqlite3_bind_text(stmt, 1, email.c_str(), -1, nullptr);
+
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            int idRes = sqlite3_column_int(stmt, 0);
+            string nome = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+            string endereco = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+            string cartao = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
+
+            dto = HospedeDTO(idRes, nome, email, endereco, cartao);
+        }
+
+        sqlite3_finalize(stmt);
+        banco.fechandoConexao();
+        return dto;
+    }
+
+    bool ControladoraPersistenciaHospede::existeEmail(const string &email) {
+        return BancoDeDados::EXISTE_TABELA_VALOR("hospedes", "email", email);
     }
 }

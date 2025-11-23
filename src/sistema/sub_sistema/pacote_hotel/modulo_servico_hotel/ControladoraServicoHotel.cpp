@@ -13,9 +13,14 @@ namespace Hotelaria {
         this->persistencia = persistencia;
     }
 
-    bool ControladoraServicoHotel::criar(const Hotel &hotel, const int &gerente_id) {
+    bool ControladoraServicoHotel::criar(const Hotel &hotel) {
         if (!persistencia) persistencia = new ControladoraPersistenciaHotel();
-        return persistencia->inserir(hotel, gerente_id);
+        return persistencia->inserir(hotel);
+    }
+
+    bool ControladoraServicoHotel::existeCodigo(const string &codigo) {
+        if (!persistencia) persistencia = new ControladoraPersistenciaHotel();
+        return persistencia->existeCodigo(codigo);
     }
 
     bool ControladoraServicoHotel::editar(const int &id, const Hotel &hotelAtualizado) {
@@ -36,5 +41,10 @@ namespace Hotelaria {
     optional<HotelDTO> ControladoraServicoHotel::pesquisar(const int &id) {
         if (!persistencia) persistencia = new ControladoraPersistenciaHotel();
         return persistencia->pesquisar(id);
+    }
+
+    int ControladoraServicoHotel::getQuantidadeDeHoteisDoGerente(int gerente_id) {
+        if (!persistencia) persistencia = new ControladoraPersistenciaHotel();
+        return persistencia->getQuantidadeDeHoteisDoGerente(gerente_id);
     }
 }

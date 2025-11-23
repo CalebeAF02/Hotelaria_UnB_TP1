@@ -9,7 +9,6 @@
 #include "Sistema.hpp"
 
 #include "ControladoraPersistenciaSolicitacaoHospedagem.hpp"
-#include "InterfaceApresentacaoAcesso.hpp"
 #include "Data.hpp"
 
 #include "Utils.hpp"
@@ -22,6 +21,7 @@
 #include <optional>
 #include <vector>
 
+#include "InterfaceApresentacaoAcessoHospede.hpp"
 #include "InterfaceApresentacaoHospede.hpp"
 
 using namespace std;
@@ -30,19 +30,16 @@ using namespace VisualizadorDeMenu;
 using namespace VisualizadorDeTabela;
 
 namespace Hotelaria {
-    class ControladoraApresentacaoAcessoHospede : public InterfaceApresentacaoAcesso {
+    class ControladoraApresentacaoAcessoHospede : public InterfaceApresentacaoAcessoHospede {
     private:
         InterfaceApresentacaoHospede *apresentacao_hospede;
 
     public:
-        void setControladoraApresentacao(InterfaceApresentacaoHospede *apresentacao_hospede);
-
-
         void exibirMenu() override;
 
-        void opcoesDeHospedagem();
+        void opcoesDeHospedagem() override;
 
-        void solicitandoHospedagem();
+        void solicitandoHospedagem() override;
 
         void statusDaSolicitandoHospedagem() const;
     };

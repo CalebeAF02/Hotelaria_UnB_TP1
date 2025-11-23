@@ -4,6 +4,8 @@
 
 #include "IO.hpp"
 
+#include <regex>
+
 //
 // Created by caleb on 02/11/2025.
 //
@@ -24,6 +26,28 @@ namespace IO {
     }
 
     void Println(const string &mensagem) {
+        cout << mensagem << endl;
+    }
+
+    void Println(string mensagem, string valor) {
+        string mudar = "{1}";
+        size_t start_pos = 0;
+        while ((start_pos = mensagem.find(mudar, start_pos)) != std::string::npos) {
+            mensagem.replace(start_pos, mudar.length(), valor);
+            start_pos += valor.length();
+        }
+        cout << mensagem << endl;
+    }
+
+    void Println(string mensagem, int valor) {
+        string s_valor = to_string(valor);
+        string mudar = "{1}";
+        size_t start_pos = 0;
+        while ((start_pos = mensagem.find(mudar, start_pos)) != std::string::npos) {
+            mensagem.replace(start_pos, mudar.length(), s_valor);
+            start_pos += s_valor.length();
+        }
+
         cout << mensagem << endl;
     }
 

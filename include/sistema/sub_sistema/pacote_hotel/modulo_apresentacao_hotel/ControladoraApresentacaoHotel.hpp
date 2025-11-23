@@ -18,6 +18,7 @@
 #include <optional>
 #include <vector>
 
+
 using namespace std;
 using namespace Utils;
 using namespace VisualizadorDeMenu;
@@ -35,7 +36,9 @@ namespace Hotelaria {
 
         void exibirMenuCRUD() override;
 
-        void criar(int &gerente_id) override;
+        void acessar() override;
+
+        void criar(int gerente_id) override;
 
         void listar() override;
 

@@ -5,8 +5,8 @@
 #include "ControladoraServicoGerente.hpp"
 
 namespace Hotelaria {
-    void ControladoraServicoGerente::setControladoraPersistencia(InterfacePersistenciaGerente *p) {
-        this->persistencia = p;
+    void ControladoraServicoGerente::setControladoraPersistencia(InterfacePersistenciaGerente *persistencia) {
+        this->persistencia = persistencia;
     }
 
     bool ControladoraServicoGerente::criar(const Gerente &gerente) {
@@ -32,5 +32,10 @@ namespace Hotelaria {
     optional<GerenteDTO> ControladoraServicoGerente::pesquisar(const int &id) {
         if (!persistencia) persistencia = new ControladoraPersistenciaGerente();
         return persistencia->pesquisarPorID(id);
+    }
+
+    optional<GerenteDTO> ControladoraServicoGerente::pesquisarPorEmail(const string email) {
+        if (!persistencia) persistencia = new ControladoraPersistenciaGerente();
+        return persistencia->pesquisarPorEmail(email);
     }
 }

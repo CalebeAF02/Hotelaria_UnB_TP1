@@ -4,6 +4,7 @@
 
 #include "Sistema.hpp"
 
+#include "SistemaSessao.hpp"
 #include "sqlite3.h"
 #include "Versao.hpp"
 
@@ -13,70 +14,13 @@ namespace Hotelaria {
 
 
     void Sistema::iniciar() {
-        IO::Println("Versao " + Versao::getVersaoCompleta() + " Compilado em " + Versao::getData());
-
-        // Instanciando todas as controladoras
-        ControladoraApresentacaoAcessoGerente acessoGerente;
-        ControladoraApresentacaoAutenticavel autenticador;
-        ControladoraApresentacaoGerente apresentacaoGerente;
-        ControladoraApresentacaoHospede apresentacaoHospede;
-        ControladoraApresentacaoHotel apresentacaoHotel;
-        ControladoraApresentacaoQuarto apresentacaoQuarto;
-        ControladoraApresentacaoReserva apresentacaoReserva;
-
-        ControladoraApresentacaoAcessoHospede acessoHospede;
-
-        // Injetando dependências
-        acessoGerente.setControladoraApresentacao(&autenticador);
-        acessoGerente.setControladoraApresentacao(&apresentacaoGerente);
-        acessoGerente.setControladoraApresentacao(&apresentacaoHospede);
-        // aqui é válido porque a classe implementa a interface
-        acessoGerente.setControladoraApresentacao(&apresentacaoHotel);
-        acessoGerente.setControladoraApresentacao(&apresentacaoQuarto);
-        acessoGerente.setControladoraApresentacao(&apresentacaoReserva);
-
-        acessoHospede.setControladoraApresentacao(&apresentacaoHospede);
-
-        // Instanciando serviços e persistências
-        ControladoraServicoAutenticavel servAutenticavel;
-        ControladoraPersistenciaAutenticavel perAutenticavel;
-        servAutenticavel.setControladoraPersistencia(&perAutenticavel);
-        autenticador.setControladoraServicoAutenticavel(&servAutenticavel);
-
-        ControladoraServicoGerente servGerente;
-        ControladoraPersistenciaGerente perGerente;
-        servGerente.setControladoraPersistencia(&perGerente);
-        apresentacaoGerente.setControladoraServicoGerente(&servGerente);
-
-        ControladoraServicoHospede servHospede;
-        ControladoraPersistenciaHospede perHospede;
-        servHospede.setControladoraPersistencia(&perHospede);
-        apresentacaoHospede.setControladoraServicoHospede(&servHospede);
-
-        ControladoraServicoHotel servHotel;
-        ControladoraPersistenciaHotel perHotel;
-        servHotel.setControladoraPersistencia(&perHotel);
-        apresentacaoHotel.setControladoraServicoHotel(&servHotel);
-
-        ControladoraServicoQuarto servQuarto;
-        ControladoraPersistenciaQuarto perQuarto;
-        servQuarto.setControladoraPersistencia(&perQuarto);
-        apresentacaoQuarto.setControladoraServicoQuarto(&servQuarto);
-
-        ControladoraServicoReserva servReserva;
-        ControladoraPersistenciaReserva perReserva;
-        servReserva.setControladoraPersistencia(&perReserva);
-        apresentacaoReserva.setControladoraServicoReserva(&servReserva);
-
-        this->apresentacao_acesso_gerente = &acessoGerente;
-        this->apresentacao_acesso_hospede = &acessoHospede;
-
         while (executando) {
             exibirMenu();
         }
     }
 
     void Sistema::exibirMenu() {
+        SistemaSessao &sessao = SistemaSessao::getInstance();
         Menu menu;
 
         int OPCAO_SAIR_DO_SISTEMA = menu.adcionarItens("Sair");
@@ -90,9 +34,9 @@ namespace Hotelaria {
                 this->executando = false;
                 IO::Println("Encerrando o sistema...");
             } else if (opcao == OPCAO_ENTRAR_COMO_GERENTE) {
-                this->apresentacao_acesso_gerente->exibirMenu();
+                sessao.getControladoraApresentacaoAcessoGerente()->exibirMenu();
             } else if (opcao == OPCAO_ENTRAR_COMO_HOSPEDE) {
-                this->apresentacao_acesso_hospede->exibirMenu();
+                sessao.getControladoraApresentacaoAcessoHospede()->exibirMenu();
             }
         }
     }

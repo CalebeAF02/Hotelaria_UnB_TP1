@@ -3,40 +3,9 @@
 //
 #include "ControladoraApresentacaoAcessoGerente.hpp"
 
-#include "ControladoraPersistenciaGerente.hpp"
+#include "SistemaSessao.hpp"
 
 namespace Hotelaria {
-    void ControladoraApresentacaoAcessoGerente::setControladoraApresentacao(
-        InterfaceApresentacaoAutenticavel *apresentacao_autenticavel) {
-        this->apresentacao_autenticavel = apresentacao_autenticavel;
-    }
-
-    void ControladoraApresentacaoAcessoGerente::setControladoraApresentacao(
-        InterfaceApresentacaoGerente *apresentacao_gerente) {
-        this->apresentacao_gerente = apresentacao_gerente;
-    }
-
-    void ControladoraApresentacaoAcessoGerente::setControladoraApresentacao(
-        InterfaceApresentacaoHospede *apresentacao_hospede) {
-        this->apresentacao_hospede = apresentacao_hospede;
-    }
-
-    void ControladoraApresentacaoAcessoGerente::setControladoraApresentacao(
-        InterfaceApresentacaoHotel *apresentacao_hotel) {
-        this->apresentacao_hotel = apresentacao_hotel;
-    }
-
-    void ControladoraApresentacaoAcessoGerente::setControladoraApresentacao(
-        InterfaceApresentacaoQuarto *apresentacao_quarto) {
-        this->apresentacao_quarto = apresentacao_quarto;
-    }
-
-    void ControladoraApresentacaoAcessoGerente::setControladoraApresentacao(
-        InterfaceApresentacaoReserva *apresentacao_reserva) {
-        this->apresentacao_reserva = apresentacao_reserva;
-    }
-
-
     void ControladoraApresentacaoAcessoGerente::exibirMenu() {
         bool executando = true;
 
@@ -46,6 +15,8 @@ namespace Hotelaria {
         const int OPCAO_CRIAR_UM_GERENTE = menu.adcionarItens("Criar Gerente");
         const int OPCAO_FAZER_LOGIN = menu.adcionarItens("Fazer Login");
 
+        SistemaSessao &sessao = SistemaSessao::getInstance();
+
         while (executando) {
             int opcao = menu.executa("Faca o acesso para liberar os servicos");
 
@@ -53,21 +24,19 @@ namespace Hotelaria {
                 executando = false;
                 IO::Println("Voltando a selecao de usuario!");
             } else if (opcao == OPCAO_CRIAR_UM_GERENTE) {
-                this->apresentacao_gerente->criar();
+                sessao.getControladoraApresentacaoGerente()->criar();
             } else if (opcao == OPCAO_FAZER_LOGIN) {
-                if (this->apresentacao_autenticavel->autenticar()) {
+                if (sessao.getControladoraApresentacaoAutenticavel()->autenticar()) {
                     this->estaAutenticado = true;
-
-                    //this->getSistema()->setGerenteID(id)
-                    string stingEmail = this->apresentacao_autenticavel->getEmailDOGerente();
-                    ControladoraPersistenciaGerente controladora_persistencia_gerente;
-                    optional<GerenteDTO> gerente = controladora_persistencia_gerente.pesquisarPorEmail(
-                        string(stingEmail));
-                    if (gerente.has_value()) {
-                        IO::Println(to_string(gerente->getId()));
-                    }
                 }
                 if (this->estaAutenticado) {
+                    SistemaSessao &sessao = SistemaSessao::getInstance();
+
+                    int gerente = sessao.getGerenteId();
+
+                    if (gerente) {
+                        sessao.setGerenteId(gerente);
+                    }
                     IO::Println("Agora Voce Possui Super-Poderes");
                     exibirMenuGerenciador();
                 }
@@ -83,9 +52,11 @@ namespace Hotelaria {
         const int OPCAO_GERENCIE_GERENTES = menu.adcionarItens("Gerencie Gerentes");
         const int OPCAO_GERENCIE_HOSPEDES = menu.adcionarItens("Gerencie Hospedes");
         const int OPCAO_GERENCIE_HOTEIS = menu.adcionarItens("Gerencie Hoteis");
-        const int OPCAO_GERENCIE_QUARTOS = menu.adcionarItens("Gerencie Quartos");
+        //const int OPCAO_GERENCIE_QUARTOS = menu.adcionarItens("Gerencie Quartos");
         const int OPCAO_GERENCIE_RESERVAS = menu.adcionarItens("Gerencie Reservas");
         const int OPCAO_AVALIAR_SOLICITACOES = menu.adcionarItens("Avaliar Solicitacoes de Hospedagem");
+
+        SistemaSessao &sessao = SistemaSessao::getInstance();
 
         while (estaAutenticado) {
             int opcao = menu.executa("Seja bem vindo a central de servicos");
@@ -94,26 +65,17 @@ namespace Hotelaria {
                 this->estaAutenticado = false;
                 IO::Println("Voce Saiu da Central de servicos e foi deslogado!");
             } else if (opcao == OPCAO_GERENCIE_GERENTES) {
-                apresentacao_gerente->exibirMenuCRUD();
+                sessao.getControladoraApresentacaoGerente()->exibirMenuCRUD();
             } else if (opcao == OPCAO_GERENCIE_HOSPEDES) {
-                //ControladorInterfaceHospede servicosHospede;
-                //servicosHospede.exibirMenuCRUD();
-                apresentacao_hospede->exibirMenuCRUD();
+                sessao.getControladoraApresentacaoHospede()->exibirMenuCRUD();
             } else if (opcao == OPCAO_GERENCIE_HOTEIS) {
-                //ControladorInterfaceHotel servicosHotel;
-                //servicosHotel.exibirMenuCRUD();
-                apresentacao_hotel->exibirMenuCRUD();
-            } else if (opcao == OPCAO_GERENCIE_QUARTOS) {
-                //ControladorInterfaceQuarto servicosQuarto;
-                //servicosQuarto.exibirMenuCRUD();
-                apresentacao_quarto->exibirMenuCRUD();
+                sessao.getControladoraApresentacaoHotel()->exibirMenuCRUD();
+                //} else if (opcao == OPCAO_GERENCIE_QUARTOS) {
+                //apresentacao_hotel->listar();
+                //apresentacao_quarto->exibirMenuCRUD();
             } else if (opcao == OPCAO_GERENCIE_RESERVAS) {
-                //ControladorInterfaceReserva servicosReserva;
-                //servicosReserva.exibirMenuCRUD();
-                apresentacao_reserva->exibirMenuCRUD();
+                sessao.getControladoraApresentacaoReserva()->exibirMenuCRUD();
             } else if (opcao == OPCAO_AVALIAR_SOLICITACOES) {
-                //ControladorInterfaceHospede servicosHospede;
-                //servicosHospede.avaliarSolicitacoes();
                 //interface_apresentacao_solicitacao_hospedagem->exibirMenuCRUD();
             } else {
                 IO::Println("Opcao Invalida!");
@@ -121,9 +83,6 @@ namespace Hotelaria {
         }
     }
 
-    InterfaceApresentacaoAutenticavel *ControladoraApresentacaoAcessoGerente::getServicoHacker() {
-        return apresentacao_autenticavel;
-    }
 
     void ControladoraApresentacaoAcessoGerente::autenticarHacker() {
         this->estaAutenticado = true;

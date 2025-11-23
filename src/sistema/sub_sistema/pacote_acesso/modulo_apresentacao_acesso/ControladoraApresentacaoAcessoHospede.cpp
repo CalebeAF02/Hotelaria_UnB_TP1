@@ -7,11 +7,6 @@
 #include "InterfaceApresentacaoHospede.hpp"
 
 namespace Hotelaria {
-    void ControladoraApresentacaoAcessoHospede::setControladoraApresentacao(
-        InterfaceApresentacaoHospede *apresentacao_hospede) {
-        this->apresentacao_hospede = apresentacao_hospede;
-    }
-
 
     void ControladoraApresentacaoAcessoHospede::exibirMenu() {
         bool executando = true;

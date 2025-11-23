@@ -10,48 +10,12 @@
 #include "sqlite3.h"
 #include "Menu.hpp"
 #include "Formato.hpp"
-#include "ControladoraApresentacaoAcessoGerente.hpp"
-#include "ControladoraApresentacaoAcessoHospede.hpp"
-
-
-// Controladoras de apresentação
-#include "ControladoraApresentacaoAcessoGerente.hpp"
-#include "ControladoraApresentacaoAcessoHospede.hpp"
-#include "ControladoraApresentacaoAutenticavel.hpp"
-#include "ControladoraApresentacaoGerente.hpp"
-#include "ControladoraApresentacaoHospede.hpp"
-#include "ControladoraApresentacaoHotel.hpp"
-#include "ControladoraApresentacaoQuarto.hpp"
-#include "ControladoraApresentacaoReserva.hpp"
-
-// Controladoras de servico
-#include "ControladoraServicoAutenticavel.hpp"
-#include "ControladoraServicoGerente.hpp"
-#include "ControladoraServicoHospede.hpp"
-#include "ControladoraServicoHotel.hpp"
-#include "ControladoraServicoQuarto.hpp"
-#include "ControladoraServicoReserva.hpp"
-
-// Controladoras de Persistencia
-#include "ControladoraPersistenciaAutenticavel.hpp"
-#include "ControladoraPersistenciaGerente.hpp"
-#include "ControladoraPersistenciaHospede.hpp"
-#include "ControladoraPersistenciaHotel.hpp"
-#include "ControladoraPersistenciaQuarto.hpp"
-#include "ControladoraPersistenciaReserva.hpp"
-#include "ControladoraPersistenciaSolicitacaoHospedagem.hpp"
-
 
 using namespace std;
 
 namespace Hotelaria {
-    class ControladoraApresentacaoAcessoGerente;
-    class ControladoraApresentacaoAcessoHospede;
-
     class Sistema {
     private:
-        ControladoraApresentacaoAcessoGerente *apresentacao_acesso_gerente;
-        ControladoraApresentacaoAcessoHospede *apresentacao_acesso_hospede;
         bool executando = true;
         bool gerente_autenticado = false;
         int gerente_id;
@@ -70,6 +34,9 @@ namespace Hotelaria {
         bool getGerenteID();
 
         bool getGerenteAutenticado();
+
+        static constexpr int MAXIMO_HOTEL_POR_GERENTE = 2;
+        static constexpr int MAXIMO_QUARTOS_POR_HOTEL = 4;
     };
 }
 #endif //GERENCIADOR_HOTEL_UNB_SISTEMAHOTEL_H

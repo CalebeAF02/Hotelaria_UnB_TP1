@@ -12,22 +12,23 @@ using namespace std;
 namespace Hotelaria {
     class QuartoDTO {
     private:
-        int quartoId;
+        int id;
         string numero;
         int capacidade;
         int dinheiro;
         string ramal;
+        int hotel_id;
 
     public:
         QuartoDTO() = default;
 
-        QuartoDTO(int quartoId, string numero, int capacidade, int dinheiro, string ramal) : quartoId(quartoId),
-            numero(numero), capacidade(capacidade), dinheiro(dinheiro), ramal(ramal) {
+        QuartoDTO(int id, string numero, int capacidade, int dinheiro, string ramal, int hotel_id) : id(id),
+            numero(numero), capacidade(capacidade), dinheiro(dinheiro), ramal(ramal), hotel_id(hotel_id) {
         };
 
-        int getQuartoId() const;
+        int getId() const;
 
-        void setQuartoId(int valor);
+        void setId(int valor);
 
         string getNumero() const;
 
@@ -44,6 +45,10 @@ namespace Hotelaria {
         string getRamal() const;
 
         void setRamal(const string &valor);
+
+        int getHotelId() const;
+
+        void setHotelId(int valor);
     };
 }
 

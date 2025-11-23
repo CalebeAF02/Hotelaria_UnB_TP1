@@ -51,7 +51,9 @@ add_executable(Gerenciador-De-Hoteis---UNB
 
         # Sistema
         src/sistema/Sistema.cpp
-        src/sistema/BancoDeDados.cpp
+
+        # Sistema - Banco
+        src/sistema/banco/BancoDeDados.cpp
 
         ## Sub Sistema - Apresentacao
         src/sistema/sub_sistema/pacote_acesso/modulo_apresentacao_acesso/ControladoraApresentacaoAcessoGerente.cpp
@@ -118,6 +120,7 @@ add_executable(Gerenciador-De-Hoteis---UNB
 
         # Utilitários
         src/sistema/utilitarios/Utils.cpp
+        src/sistema/utilitarios/Modos.cpp
 
         # Utilitários - Enum
         src/sistema/utilitarios/enum/StatusSolicitacaoHospedagem.cpp
@@ -149,8 +152,12 @@ add_executable(Gerenciador-De-Hoteis---UNB
         testes/testes_entidades/TesteHotel.cpp
         testes/testes_entidades/TesteQuarto.cpp
         testes/testes_entidades/TesteReserva.cpp
-        src/sistema/utilitarios/Modos.cpp
-        src/sistema/utilitarios/Modos.hpp
+
+        src/sistema/SistemaSessao.cpp
+
+        src/sistema/AplicacaoSistema.cpp
+
+
 )
 
 add_dependencies(Gerenciador-De-Hoteis---UNB gerar_versao)
@@ -170,6 +177,8 @@ target_include_directories(Gerenciador-De-Hoteis---UNB PRIVATE
 
         ${CMAKE_SOURCE_DIR}/include/sistema
 
+        ${CMAKE_SOURCE_DIR}/include/sistema/banco
+
         ${CMAKE_SOURCE_DIR}/include/sistema/objetos
 
         ${CMAKE_SOURCE_DIR}/include/sistema/objetos/dominios
@@ -186,6 +195,7 @@ target_include_directories(Gerenciador-De-Hoteis---UNB PRIVATE
         ${CMAKE_SOURCE_DIR}/include/sistema/sub_sistema/pacote_hotel
         ${CMAKE_SOURCE_DIR}/include/sistema/sub_sistema/pacote_quarto
         ${CMAKE_SOURCE_DIR}/include/sistema/sub_sistema/pacote_reserva
+
 
         ${CMAKE_SOURCE_DIR}/include/sistema/sub_sistema/pacote_acesso/modulo_apresentacao_acesso
         ${CMAKE_SOURCE_DIR}/include/sistema/sub_sistema/pacote_autenticavel/modulo_apresentacao_autenticavel

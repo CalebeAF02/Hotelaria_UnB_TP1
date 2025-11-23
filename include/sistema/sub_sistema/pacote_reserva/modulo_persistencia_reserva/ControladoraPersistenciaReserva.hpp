@@ -9,7 +9,7 @@
 #include "Reserva.hpp"
 #include "ReservaDTO.hpp"
 
-#include "BancoDeDados.hpp"
+#include "../../../banco/BancoDeDados.hpp"
 
 #include <iostream>
 #include <vector>

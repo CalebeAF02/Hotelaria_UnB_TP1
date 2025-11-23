@@ -4,6 +4,8 @@
 
 #include "ControladoraApresentacaoHospede.hpp"
 
+#include "SistemaSessao.hpp"
+
 namespace Hotelaria {
     void ControladoraApresentacaoHospede::setControladoraServicoHospede(
         InterfaceServicoHospede *servico) {
@@ -40,72 +42,68 @@ namespace Hotelaria {
         }
     };
 
-    void ControladoraApresentacaoHospede::criar() {
+    bool ControladoraApresentacaoHospede::criar() {
         bool criado = false;
         bool tudoOK = true;
 
-        while (!criado) // Enquanto craido esta falso , ele repete
-        {
-            Hospede *hospede = new Hospede();
+        while (!criado) {
+            Hospede hospede;
 
-            if (hospede) {
-                Formato::TituloEmCaixa("Criando Novo Hospede");
+            Formato::TituloEmCaixa("Criando Novo Hospede");
 
-                IO::Print("Informe o Nome: ");
-                string nomeStr = IO::LerLinha();
+            IO::Print("Informe o Nome: ");
+            string nomeStr = IO::LerLinha();
+            try {
+                hospede.setNome(Nome(nomeStr));
+            } catch (invalid_argument &erro) {
+                IO::Println(erro.what());
+                tudoOK = false;
+                break;
+            }
+            if (tudoOK) {
+                IO::Print("Informe o Email: ");
+                string emailStr = IO::LerLinha();
                 try {
-                    hospede->setNome(Nome(nomeStr));
+                    hospede.setEmail(Email(emailStr));
                 } catch (invalid_argument &erro) {
                     IO::Println(erro.what());
                     tudoOK = false;
+                    break;
                 }
-                if (tudoOK) {
-                    IO::Print("Informe o Email: ");
-                    string emailStr = IO::LerLinha();
-                    try {
-                        hospede->setEmail(Email(emailStr));
-                    } catch (invalid_argument &erro) {
-                        IO::Println(erro.what());
-                        tudoOK = false;
-                    }
+            }
+            if (tudoOK) {
+                IO::Print("Informe o Endereco: ");
+                string enderecoStr = IO::LerLinha();
+                try {
+                    hospede.setEndereco(Endereco(enderecoStr));
+                } catch (invalid_argument &erro) {
+                    IO::Println(erro.what());
+                    tudoOK = false;
+                    break;
                 }
-                if (tudoOK) {
-                    IO::Print("Informe o Endereco: ");
-                    string enderecoStr = IO::LerLinha();
-                    try {
-                        hospede->setEndereco(Endereco(enderecoStr));
-                    } catch (invalid_argument &erro) {
-                        IO::Println(erro.what());
-                        tudoOK = false;
-                    }
+            }
+            if (tudoOK) {
+                IO::Print("Informe o Cartao: ");
+                string cartaoStr = IO::LerLinha();
+                try {
+                    hospede.setCartao(Cartao(cartaoStr));
+                } catch (invalid_argument &erro) {
+                    IO::Println(erro.what());
+                    tudoOK = false;
+                    break;
                 }
-                if (tudoOK) {
-                    IO::Print("Informe o Cartao: ");
-                    string cartaoStr = IO::LerLinha();
-                    try {
-                        ;
-                        hospede->setCartao(Cartao(cartaoStr));
-                    } catch (invalid_argument &erro) {
-                        IO::Println(erro.what());
-                        tudoOK = false;
-                    }
-                }
-                if (tudoOK) {
-                    IO::Println("Hospede Cadastrado");
-                    criado = true;
+            }
+            if (tudoOK) {
+                bool sucesso = servico->criar(hospede);
 
-                    servico->criar(*hospede);
+                if (sucesso) IO::Println("Hospede Cadastrado com Sucesso!");
+                else IO::Println("Falha ao cadastrar (Erro de Servico/Banco).");
 
-                    criado = true;
-                    IO::Println("Hospede cadastrado!");
-                    // coloca os Hospedes da listaGerentes que esta na memoria para o arquivo Dados_Gerentes.tsv .
-                } else {
-                    IO::Println("Erro: Hospede nao cadastrado!");
-                }
-                delete hospede; // Liberar o ponteiro da memoria.
+                criado = sucesso;
             }
         }
-    };
+        return criado;
+    }
 
     void ControladoraApresentacaoHospede::listar() {
         vector<HospedeDTO> lista = servico->listarTodos();
@@ -143,7 +141,6 @@ namespace Hotelaria {
             return;
         }
 
-        // Mostrar dados atuais
         Tabela tab;
         Linha *obj = tab.criarObj();
         obj->atributo("Id", dto->getId());
@@ -152,16 +149,15 @@ namespace Hotelaria {
         obj->atributo("Endereco", dto->getEndereco());
         tab.exibirTabela("Hospede Atual");
 
-        // Coletar novos dados
         Hospede hospede(*dto);
         bool alterado = false;
 
         Menu menu;
+        const int OPCAO_VOLTAR = menu.adcionarItens("Voltar");
         const int OPCAO_ALTERAR_NOME = menu.adcionarItens("Alterar Nome");
         const int OPCAO_ALTERAR_EMAIL = menu.adcionarItens("Alterar Email");
         const int OPCAO_ALTERAR_ENDERECO = menu.adcionarItens("Alterar Endereco");
         const int OPCAO_ALTERAR_CARTAO = menu.adcionarItens("Alterar Cartao");
-        const int OPCAO_VOLTAR = menu.adcionarItens("Voltar");
 
         int opcao = menu.executa("Atualizacao de Cadastro");
 
@@ -200,8 +196,6 @@ namespace Hotelaria {
             IO::Println("Opcao invalida.");
         }
 
-
-        // Chamar serviço
         bool ok = servico->editar(Email(dto->getEmail()), hospede);
         IO::Println(ok ? "Cadastro atualizado com sucesso!" : "Erro ao atualizar cadastro.");
     };
@@ -217,14 +211,12 @@ namespace Hotelaria {
 
         int id = stoi(idStr);
 
-        // Buscar Hospede para mostrar antes de excluir
         auto dto = servico->pesquisar(id);
         if (!dto.has_value()) {
             IO::Println("Erro: Hospede não encontrado.");
             return;
         }
 
-        // Exibir dados do Hospede encontrado
         Tabela tab;
         Linha *obj = tab.criarObj();
         obj->atributo("Id", dto->getId());
@@ -233,8 +225,7 @@ namespace Hotelaria {
         obj->atributo("Endereco", dto->getEndereco());
         tab.exibirTabela("Hospede a Remover");
 
-        // Chamar serviço para remover
         bool ok = servico->remover(id);
-        IO::Println(ok ? "Hospede excluído com sucesso!" : "Erro ao excluir gerente.");
+        IO::Println(ok ? "Hospede excluído com sucesso!" : "Erro ao excluir hospede.");
     };
 }

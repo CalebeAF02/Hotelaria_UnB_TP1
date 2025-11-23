@@ -9,7 +9,7 @@
 #include "QuartoDTO.hpp"
 #include "Quarto.hpp"
 
-#include "BancoDeDados.hpp"
+#include "../../../banco/BancoDeDados.hpp"
 
 #include <iostream>
 #include <vector>
@@ -23,8 +23,6 @@ namespace Hotelaria {
     public:
         bool inserir(const Quarto &quarto) override;
 
-        bool autenticar(const string &email, const string &senha) override;
-
         bool atualizar(const int &id, const Quarto &quarto) override;
 
         bool excluir(const int &id) override;
@@ -32,6 +30,8 @@ namespace Hotelaria {
         vector<QuartoDTO> listar() override;
 
         optional<QuartoDTO> pesquisar(const int &id) override;
+
+        int getQuantidadeDeQuartosDoHotel(int hotel_id) override;
     };
 }
 

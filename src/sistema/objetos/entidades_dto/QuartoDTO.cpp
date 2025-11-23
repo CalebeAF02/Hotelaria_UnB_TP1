@@ -5,12 +5,12 @@
 #include "QuartoDTO.hpp"
 
 namespace Hotelaria {
-    int QuartoDTO::getQuartoId() const {
-        return quartoId;
+    int QuartoDTO::getId() const {
+        return id;
     }
 
-    void QuartoDTO::setQuartoId(int valor) {
-        this->quartoId = valor;
+    void QuartoDTO::setId(int valor) {
+        this->id = valor;
     }
 
     string QuartoDTO::getNumero() const {
@@ -43,5 +43,13 @@ namespace Hotelaria {
 
     void QuartoDTO::setRamal(const string &valor) {
         this->ramal = valor;
+    }
+
+    int QuartoDTO::getHotelId() const {
+        return hotel_id;
+    }
+
+    void QuartoDTO::setHotelId(int valor) {
+        this->hotel_id = valor;
     }
 }

@@ -9,7 +9,7 @@
 #include "GerenteDTO.hpp"
 #include "Gerente.hpp"
 
-#include "BancoDeDados.hpp"
+#include "../../../banco/BancoDeDados.hpp"
 
 #include <iostream>
 #include <vector>
@@ -33,7 +33,7 @@ namespace Hotelaria {
 
         optional<GerenteDTO> pesquisarPorID(const int &id) override;
 
-        optional<GerenteDTO> pesquisarPorEmail(const string &email) override;
+        optional<GerenteDTO> pesquisarPorEmail(const string email) override;
 
         bool existeEmail(const string &email) override;
     };

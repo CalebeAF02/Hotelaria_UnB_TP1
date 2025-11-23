@@ -43,8 +43,7 @@ namespace Hotelaria {
     bool ControladoraApresentacaoGerente::criar() {
         bool criado = false;
 
-        while (!criado) // Enquanto craido esta falso , ele repete
-        {
+        while (!criado) {
             bool tudoOK = true;
             Gerente gerente;
 
@@ -68,7 +67,6 @@ namespace Hotelaria {
                     IO::Println(erro.what());
                     tudoOK = false;
                     break;
-
                 }
             }
             if (tudoOK) {
@@ -141,7 +139,6 @@ namespace Hotelaria {
             return;
         }
 
-        // Mostrar dados atuais
         Tabela tab;
         Linha *obj = tab.criarObj();
         obj->atributo("Id", dto->getId());
@@ -150,16 +147,15 @@ namespace Hotelaria {
         obj->atributo("Ramal", dto->getRamal());
         tab.exibirTabela("Gerente Atual");
 
-        // Coletar novos dados
         Gerente gerente(*dto);
         bool alterado = false;
 
         Menu menu;
+        const int OPCAO_VOLTAR = menu.adcionarItens("Voltar");
         const int OPCAO_ALTERAR_NOME = menu.adcionarItens("Alterar Nome");
         const int OPCAO_ALTERAR_EMAIL = menu.adcionarItens("Alterar Email");
         const int OPCAO_ALTERAR_RAMAL = menu.adcionarItens("Alterar Ramal");
         const int OPCAO_ALTERAR_SENHA = menu.adcionarItens("Alterar Senha");
-        const int OPCAO_VOLTAR = menu.adcionarItens("Voltar");
 
         int opcao = menu.executa("Atualizacao de Cadastro");
 
@@ -198,8 +194,6 @@ namespace Hotelaria {
             IO::Println("Opcao invalida.");
         }
 
-
-        // Chamar serviço
         bool ok = servico->editar(Email(dto->getEmail()), gerente);
         IO::Println(ok ? "Cadastro atualizado com sucesso!" : "Erro ao atualizar cadastro.");
     }
@@ -215,14 +209,12 @@ namespace Hotelaria {
 
         int id = stoi(idStr);
 
-        // Buscar gerente para mostrar antes de excluir
         auto dto = servico->pesquisar(id);
         if (!dto.has_value()) {
             IO::Println("Erro: Gerente não encontrado.");
             return;
         }
 
-        // Exibir dados do gerente encontrado
         Tabela tab;
         Linha *obj = tab.criarObj();
         obj->atributo("Id", dto->getId());
@@ -231,7 +223,6 @@ namespace Hotelaria {
         obj->atributo("Ramal", dto->getRamal());
         tab.exibirTabela("Gerente a Remover");
 
-        // Chamar serviço para remover
         bool ok = servico->remover(id);
         IO::Println(ok ? "Gerente excluído com sucesso!" : "Erro ao excluir gerente.");
     }
@@ -250,7 +241,7 @@ namespace Hotelaria {
         for (auto &solicitacao: pendentes) {
             IO::Println("Hospede: " + solicitacao.getHospedeId());
             IO::Println("Hotel: " + solicitacao.getHotelId());
-            IO::Println("Quarto: " + solicitacao.getQuartoId());
+            IO::Println("Quarto: " + solicitacao.getId());
             IO::Println("Chegada: " + solicitacao.getChegada().toString());
             IO::Println("Partida: " + solicitacao.getPartida().toString());
             IO::Println("Status atual: Pendente");

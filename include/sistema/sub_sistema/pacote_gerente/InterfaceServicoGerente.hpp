@@ -33,6 +33,8 @@ namespace Hotelaria {
 
         virtual optional<GerenteDTO> pesquisar(const int &id) = 0;
 
+        virtual optional<GerenteDTO> pesquisarPorEmail(const string email) =0;
+
         virtual ~InterfaceServicoGerente() = default;
     };
 }

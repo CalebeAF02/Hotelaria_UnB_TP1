@@ -4,6 +4,9 @@
 
 #include "ControladoraApresentacaoHotel.hpp"
 
+#include "InterfaceApresentacaoQuarto.hpp"
+#include "SistemaSessao.hpp"
+
 namespace Hotelaria {
     void ControladoraApresentacaoHotel::setControladoraServicoHotel(InterfaceServicoHotel *controladora_servico_hotel) {
         this->servico = controladora_servico_hotel;
@@ -14,6 +17,7 @@ namespace Hotelaria {
         Menu menu;
 
         const int OPCAO_VOLTAR = menu.adcionarItens("Voltar ao Menu Anterior");
+        const int OPCAO_ACESSAR = menu.adcionarItens("Acessar Hotel");
         const int OPCAO_CRIAR = menu.adcionarItens("Criar Novo Hotel");
         const int OPCAO_LISTAR = menu.adcionarItens("Listar Todos os Hoteis");
         const int OPCAO_ATUALIZAR = menu.adcionarItens("Atualizar Hotel (Editar)");
@@ -25,8 +29,11 @@ namespace Hotelaria {
             if (opcao == OPCAO_VOLTAR) {
                 executando = false;
                 IO::Println("Voltando ao menu de acesso.");
+            } else if (opcao == OPCAO_ACESSAR) {
+                acessar();
             } else if (opcao == OPCAO_CRIAR) {
-                int gerente_id;
+                SistemaSessao &sessao = SistemaSessao::getInstance();
+                int gerente_id = sessao.getGerenteId();
                 criar(gerente_id);
             } else if (opcao == OPCAO_LISTAR) {
                 listar();
@@ -40,12 +47,46 @@ namespace Hotelaria {
         }
     }
 
-    void ControladoraApresentacaoHotel::criar(int &gerente_id) {
+    void ControladoraApresentacaoHotel::acessar() {
+        IO::Print("Informe o Id do Hotel: ");
+        string hotel_id = IO::LerLinha();
+        try {
+        } catch (invalid_argument &erro) {
+            IO::Println(erro.what());
+        }
+
+        if (Utils::verificaSeENumero(hotel_id)) {
+            int hotel_id_inteiro = stoi(hotel_id);
+            optional<HotelDTO> op_hotel = servico->pesquisar(hotel_id_inteiro);
+            if (op_hotel.has_value()) {
+                IO::Println(op_hotel->getNome());
+                SistemaSessao &sessao = SistemaSessao::getInstance();
+                sessao.setHotelId(hotel_id_inteiro);
+                InterfaceApresentacaoQuarto *apresentacao_quarto = sessao.getControladoraApresentacaoQuarto();
+                apresentacao_quarto->exibirMenuCRUD();
+            } else {
+                IO::Println("Erro: Hotel nao encontrado!");
+            }
+        } else {
+            IO::Println("Erro: Id invalido!");
+        }
+    }
+
+    void ControladoraApresentacaoHotel::criar(int gerente_id) {
+        IO::Println("Quantidade :: " + to_string(servico->getQuantidadeDeHoteisDoGerente(gerente_id)));
+
+        /*
+        if (servico->getQuantidadeDeHoteisDoGerente(gerente_id) >= Sistema::MAXIMO_HOTEL_POR_GERENTE) {
+            IO::Println("Erro: O gerente so pode ter no maximo " + to_string(Sistema::MAXIMO_HOTEL_POR_GERENTE) + " hoteis cadastrados !");
+            return;
+        }*/
+
         bool criado = false;
         bool tudoOK = true;
 
         while (!criado) {
             Hotel *hotel = new Hotel();
+            hotel->setGerenteId(gerente_id);
 
             Formato::TituloEmCaixa("Criando Novo Hotel");
             if (tudoOK) {
@@ -84,7 +125,13 @@ namespace Hotelaria {
                     IO::Print("Informe o Codigo: ");
                     string valor = IO::LerLinha();
                     try {
-                        hotel->setCodigo(Codigo(valor));
+                        if (!servico->existeCodigo(valor)) {
+                            hotel->setCodigo(Codigo(valor));
+                        } else {
+                            IO::Println("Erro: Ja existe um Hotel Cadastrado com este Codigo!");
+                            tudoOK = false;
+                            break;
+                        }
                     } catch (invalid_argument &erro) {
                         IO::Println(erro.what());
                         tudoOK = false;
@@ -92,7 +139,7 @@ namespace Hotelaria {
                     }
                 }
                 if (tudoOK) {
-                    bool sucesso = servico->criar(*hotel, gerente_id);
+                    bool sucesso = servico->criar(*hotel);
 
                     if (sucesso) IO::Println("Hotel Cadastrado com Sucesso!");
                     else IO::Println("Falha ao cadastrar (Erro de Servico/Banco).");
@@ -103,6 +150,7 @@ namespace Hotelaria {
             }
         }
     }
+
 
     void ControladoraApresentacaoHotel::listar() {
         vector<HotelDTO> lista = servico->listarTodos();
@@ -130,13 +178,12 @@ namespace Hotelaria {
         IO::Print("Informe o Id do hotel: ");
         string id_hotel = IO::LerLinha();
 
-        if (Utils::verificaSeENumero(id_hotel)) {
+        if (verificaSeENumero(id_hotel)) {
             bool alterado = false;
 
             int id_numero = stoi(id_hotel);
             optional<HotelDTO> existe_hotel = servico->pesquisar(id_numero);
-            // transforma a string em numero e verica no banco, retornando um Hotel DTO opcional.
-            // has_value  = verifica se tem valor
+
             if (existe_hotel.has_value()) {
                 Tabela tab;
 
@@ -157,11 +204,11 @@ namespace Hotelaria {
 
                 Menu menu;
 
+                const int OPCAO_VOLTAR_AO_SISTEMA = menu.adcionarItens("Voltar");
                 const int OPCAO_ALTERAR_NOME = menu.adcionarItens("Alterar Nome");
                 const int OPCAO_ALTERAR_ENDERECO = menu.adcionarItens("Alterar Endereco");
                 const int OPCAO_ALTERAR_TELEFONE = menu.adcionarItens("Alterar Telefone");
                 const int OPCAO_ALTERAR_CODIGO = menu.adcionarItens("Alterar Codigo");
-                const int OPCAO_VOLTAR_AO_SISTEMA = menu.adcionarItens("Voltar");
 
                 int opcao = menu.executa("Atualizacao de Cadastro");
 
@@ -203,6 +250,7 @@ namespace Hotelaria {
                     }
                 } else if (opcao == OPCAO_VOLTAR_AO_SISTEMA) {
                     IO::Println("Atualizacao cancelada.");
+                    return;
                 } else {
                     IO::Println("Opcao invalida.");
                 }

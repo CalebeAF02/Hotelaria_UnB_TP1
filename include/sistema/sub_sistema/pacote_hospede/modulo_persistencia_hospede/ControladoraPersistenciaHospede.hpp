@@ -9,7 +9,7 @@
 #include "Hospede.hpp"
 #include "HospedeDTO.hpp"
 
-#include "BancoDeDados.hpp"
+#include "../../../banco/BancoDeDados.hpp"
 
 #include <iostream>
 #include <vector>
@@ -20,12 +20,8 @@ using namespace std;
 
 namespace Hotelaria {
     class ControladoraPersistenciaHospede : public InterfacePersistenciaHospede {
-        string caminho = "Dados_Hospedes.txt";
-
     public:
         bool inserir(const Hospede &hospede) override;
-
-        bool autenticar(const string &email, const string &senha) override;
 
         bool atualizar(const Email &email, const Hospede &hospede) override;
 
@@ -34,6 +30,10 @@ namespace Hotelaria {
         vector<HospedeDTO> listar() override;
 
         optional<HospedeDTO> pesquisar(const int &id) override;
+
+        optional<HospedeDTO> pesquisarPorEmail(const string email) override;
+
+        bool existeEmail(const string &email) override;
     };
 }
 

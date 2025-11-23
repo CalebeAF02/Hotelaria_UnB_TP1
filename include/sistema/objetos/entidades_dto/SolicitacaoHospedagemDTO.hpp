@@ -15,41 +15,29 @@ using namespace std;
 namespace Hotelaria {
     class SolicitacaoHospedagemDTO {
     private:
-        int solicitacaoHospedagemId;
-        int hospedeId;
-        int hotelId;
-        int quartoId;
+        int id;
         Data chegada;
         Data partida;
         StatusSolicitacaoHospedagem status;
         string motivoRecusa;
+        int hospede_id;
+        int hotel_id;
+        int quarto_id;
 
     public:
         SolicitacaoHospedagemDTO() = default;
 
-        SolicitacaoHospedagemDTO(int solicitacaoHospedagemId, int hospedeId, int hotelId, int quartoId, Data chegada,
-                                 Data partida, StatusSolicitacaoHospedagem (status),
-                                 string motivoRecusa) : solicitacaoHospedagemId(solicitacaoHospedagemId),
-                                                        hospedeId(hospedeId), hotelId(hotelId), quartoId(quartoId),
-                                                        chegada(chegada), partida(partida), status(status),
-                                                        motivoRecusa(motivoRecusa) {
+        SolicitacaoHospedagemDTO(int id, Data chegada, Data partida,
+                                 StatusSolicitacaoHospedagem (status), string motivoRecusa, int hospede_id,
+                                 int hotel_id, int quarto_id) : id(id),
+                                                                chegada(chegada), partida(partida), status(status),
+                                                                motivoRecusa(motivoRecusa), hospede_id(hospede_id),
+                                                                hotel_id(hotel_id), quarto_id(quarto_id) {
         };
 
-        int getSolicitacaoHospedagemId() const;
+        int setId() const;
 
-        void setSolicitacaoHospedagemId(int valor);
-
-        int getHospedeId() const;
-
-        void setHospedeId(int valor);
-
-        int getHotelId() const;
-
-        void setHotelId(int valor);
-
-        int getQuartoId() const;
-
-        void setQuartoId(int valor);
+        void getId(int valor);
 
         Data getChegada() const;
 
@@ -66,6 +54,18 @@ namespace Hotelaria {
         string getMotivoRecusa() const;
 
         void setMotivoRecusa(const string &valor);
+
+        int getHospedeId() const;
+
+        void setHospedeId(int valor);
+
+        int getHotelId() const;
+
+        void setHotelId(int valor);
+
+        int getQuartoId() const;
+
+        void setQuartoId(int valor);
     };
 }
 

@@ -12,7 +12,7 @@ using namespace std;
 namespace Hotelaria {
     class GerenteDTO {
     private:
-        int id_gerente;
+        int id;
         string nome;
         string email;
         string ramal;
@@ -21,13 +21,13 @@ namespace Hotelaria {
     public:
         GerenteDTO() = default;
 
-        GerenteDTO(int gerenteId, string nome, string email, string ramal) : id_gerente(gerenteId), nome(nome),
-                                                                             email(email), ramal(ramal) {
+        GerenteDTO(int id, string nome, string email, string ramal) : id(id), nome(nome),
+                                                                      email(email), ramal(ramal) {
         };
 
         int getId() const;
 
-        void setGerenteId(int valor);
+        void setId(int valor);
 
         string getNome() const;
 

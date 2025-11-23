@@ -17,17 +17,20 @@ namespace Hotelaria {
         string partida;
         int dinheiro;
         string codigo;
+        int quarto_id;
 
     public:
         ReservaDTO() = default;
 
-        ReservaDTO(int reservaId, string chegada, string partida, int dinheiro, string codigo) : reservaId(reservaId),
-            chegada(chegada), partida(partida), dinheiro(dinheiro), codigo(codigo) {
+        ReservaDTO(int reservaId, string chegada, string partida, int dinheiro, string codigo,
+                   int quarto_id) : reservaId(reservaId),
+                                    chegada(chegada), partida(partida), dinheiro(dinheiro), codigo(codigo),
+                                    quarto_id(quarto_id) {
         };
 
-        int getReservaId() const;
+        int getId() const;
 
-        void setReservaId(int valor);
+        void setId(int valor);
 
         string getChegada() const;
 
@@ -44,6 +47,10 @@ namespace Hotelaria {
         string getCodigo() const;
 
         void setCodigo(const string &valor);
+
+        int getQuartoId() const;
+
+        void setQuartoId(int valor);
     };
 }
 

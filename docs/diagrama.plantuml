@@ -1,433 +1,1268 @@
 @startuml
+skinparam linetype ortho
 skinparam packageStyle rectangle
-skinparam classAttributeIconSize 0
-title Hotelaria_UnB_TP1 – Arquitetura (alto nível)
-
-package Sistema {
-  class Sistema {
-    - executando : bool
-    - contoladoraApresentacaoAcessoGerente : ControladoraApresentacaoAcessoGerente
-    - contoladoraApresentacaoAcessoHospede : ControladoraApresentacaoAcessoHospede
-    + iniciar() : void
-    - exibirMenu() : void
-    - getExecutandoSistema() : bool
-    - sair() : void
-  }
-
-  class BancoDeDados {
-    - db : sqlite3*
-    + getConexao() : sqlite3*
-    + abrindoConexao() : bool
-    + fechandoConexao() : bool
-    + iniciar() : void
-    - tabelaGerente(db) : void
-    - tabelaHospede(db) : void
-    - tabelaHotel(db) : void
-    - tabelaQuarto(db) : void
-    - tabelaReserva(db) : void
-    - tabelaSolicitacoesDeHospedagem(db) : void
-  }
-}
-
-package Acesso {
-  interface InterfaceApresentacaoAcesso {
-    + exibirMenu() : void
-    + setControladoraServicoAcesso(servico: InterfaceServicoAcesso) : void
-  }
-
-  interface InterfaceServicoAcesso {
-    + criar() : bool
-    + autenticar() : bool
-  }
-
-  class ControladoraApresentacaoAcessoGerente implements InterfaceApresentacaoAcesso {
-    - servico : InterfaceServicoAcesso*
-    + setControladoraServicoAcesso(s: InterfaceServicoAcesso*) : void
-    + exibirMenu() : void
-    + exibirMenuGerenciador() : void
-  }
-
-  class ControladoraApresentacaoAcessoHospede implements InterfaceApresentacaoAcesso {
-    - servico : InterfaceServicoAcesso*
-    + setControladoraServicoAcesso(s: InterfaceServicoAcesso*) : void
-    + exibirMenu() : void
-    + opcoesDeHospedagem() : void
-    + solicitandoHospedagem() : void
-    + statusDaSolicitandoHospedagem() : void
-  }
-
-  class ControladoraServicoAcessoGerente implements InterfaceServicoAcesso {
-    - persistencia : InterfacePersistenciaGerente*
-    + autenticar() : bool
-  }
-
-  class ControladoraServicoAcessoHospede implements InterfaceServicoAcesso
-}
-
-package Autenticacao {
-  interface InterfaceApresentacaoAutenticavel {
-    + sair() : void
-    + autenticar(email: Email*) : bool
-    + setControladoraServicoAutenticavel(svc: InterfaceServicoAutenticavel*) : void
-    + setEstaAutenticado(flag: bool) : void
-    + getEstaAutenticado() : bool
-  }
-
-  interface InterfaceServicoAutenticavel {
-    + autenticar(email: Email, senha: Senha) : bool
-  }
-
-  class ControladoraApresentacaoAutenticavel implements InterfaceApresentacaoAutenticavel {
-    - controladora_servico_autenticavel : InterfaceServicoAutenticavel*
-    - estaAutenticado : bool
-    + sair() : void
-    + autenticar(email: Email*) : bool
-    + setControladoraServicoAutenticavel(svc: InterfaceServicoAutenticavel*) : void
-    + setEstaAutenticado(flag: bool) : void
-    + getEstaAutenticado() : bool
-    + getHacke() : InterfaceServicoAutenticavel*
-  }
-
-  class ControladoraServicoAutenticavel implements InterfaceServicoAutenticavel {
-    + autenticar(email: Email, senha: Senha) : bool
-  }
-}
-
-package Gerente {
-  interface InterfaceApresentacaoGerente {
-    + setControladoraServicoPessoal(svc: InterfaceServicoGerente*) : void
-    + exibirMenu() : void
-  }
-
-  interface InterfaceServicoGerente {
-    + criar(gerente: Gerente) : bool
-    + editar(emailAntigo: Email, gerenteAtualizado: Gerente) : bool
-    + remover(id: int) : bool
-    + listarTodos() : vector<GerenteDTO>
-    + pesquisar(id: int) : optional<GerenteDTO>
-  }
-
-  interface InterfacePersistenciaGerente {
-    + inserir(gerente: Gerente) : bool
-    + autenticar(email: string, senha: string) : bool
-    + listar() : vector<GerenteDTO>
-    + pesquisar(id: int) : optional<GerenteDTO>
-    + atualizar(emailAntigo: Email, gerente: Gerente) : bool
-    + excluir(id: int) : bool
-  }
-
-  class ControladoraApresentacaoGerente implements InterfaceApresentacaoGerente {
-    - servico : InterfaceServicoGerente*
-    - executando : bool
-    - estaAutenticado : bool
-    + setControladoraServicoPessoal(svc: InterfaceServicoGerente*) : void
-    + exibirMenu() : void
-    + exibirMenuCRUD() : void
-    + criar() : void
-    + listar() : void
-    + atualizar() : void
-    + remover() : void
-  }
-
-  class ControladoraServicoGerente implements InterfaceServicoGerente {
-    - persistencia : InterfacePersistenciaGerente*
-    + setControladoraPersistencia(p: InterfacePersistenciaGerente*) : void
-    + criar(gerente: Gerente) : bool
-    + editar(emailAntigo: Email, gerenteAtualizado: Gerente) : bool
-    + remover(id: int) : bool
-    + listarTodos() : vector<GerenteDTO>
-    + pesquisar(id: int) : optional<GerenteDTO>
-  }
-
-  class ControladoraPersistenciaGerente implements InterfacePersistenciaGerente {
-    + inserir(gerente: Gerente) : bool
-    + autenticar(email: string, senha: string) : bool
-    + listar() : vector<GerenteDTO>
-    + pesquisar(id: int) : optional<GerenteDTO>
-    + atualizar(emailAntigo: Email, gerente: Gerente) : bool
-    + excluir(id: int) : bool
-  }
-
-  class GerenteDTO {
-    - gerenteId : int
-    - nome : string
-    - email : string
-    - ramal : string
-    + getGerenteId() : int
-    + getNome() : string
-    + getEmail() : string
-    + getRamal() : string
-  }
-}
-
-package Hospede {
-  interface InterfaceApresentacaoHospede {
-    + setControladoraServicoHospede(svc: InterfaceServicoHospede*) : void
-    + exibirMenu() : void
-  }
-  interface InterfaceServicoHospede {
-    + criar() : bool
-    + pesquisar() : bool
-    + editar() : bool
-    + remover() : bool
-  }
-  interface InterfacePersistenciaHospede {
-    + inserir(hospede: Hospede) : bool
-    + listar() : vector<Hospede*>
-  }
-
-  class ControladoraApresentacaoHospede implements InterfaceApresentacaoHospede {
-    - servico : InterfaceServicoHospede*
-    + setControladoraServicoHospede(svc: InterfaceServicoHospede*) : void
-    + exibirMenu() : void
-    + exibirMenuCRUD() : void
-    + criar() : void
-    + listar() : void
-    + atualizar() : void
-    + remover() : void
-  }
-  class ControladoraServicoHospede implements InterfaceServicoHospede {
-    - persistencia : InterfacePersistenciaHospede*
-    + exibirMenu() : void
-    + avaliarSolicitacoes() : void
-    + criar() : bool
-    + remover() : bool
-    + editar() : bool
-    + pesquisar() : bool
-  }
-  class ControladoraPersistenciaHospede implements InterfacePersistenciaHospede {
-    + inserir(hospede: Hospede) : bool
-    + listar() : vector<Hospede*>
-  }
-
-  class HospedeDTO
-}
-
-package Hotel {
-  interface InterfaceApresentacaoHotel {
-    + setControladoraServicoHotel(svc: InterfaceServicoHotel*) : void
-    + exibirMenu() : void
-  }
-  interface InterfaceServicoHotel {
-    + criar(hotel: Hotel) : bool
-    + pesquisar() : bool
-    + editar(hotel: Hotel) : bool
-    + remover() : bool
-  }
-  interface InterfacePersistenciaHotel {
-    + inserir(hotel: Hotel*) : bool
-    + listar() : vector<HotelDTO*>
-    + pesquisar(id: int) : optional<HotelDTO>
-    + atualizar(id: int, hotel: Hotel) : bool
-  }
-
-  class ControladoraApresentacaoHotel implements InterfaceApresentacaoHotel {
-    - servico : InterfaceServicoHotel*
-    - executando : bool
-    + setControladoraServicoHotel(svc: InterfaceServicoHotel*) : void
-    + exibirMenu() : void
-    + exibirMenuCRUD() : void
-    + criar() : bool
-    + listar() : bool
-    + atualizar() : bool
-    + remover() : bool
-  }
-  class ControladoraServicoHotel implements InterfaceServicoHotel {
-    - persistencia : InterfacePersistenciaHotel*
-    - executando : bool
-    + setControladoraPersistencia(p: InterfacePersistenciaHotel*) : void
-    + criar(hotel: Hotel) : bool
-    + pesquisar() : bool
-    + editar(hotel: Hotel) : bool
-    + remover() : bool
-    + listarTodos() : vector<HotelDTO*>
-    + buscarPorId() : optional<HotelDTO>
-  }
-  class ControladoraPersistenciaHotel implements InterfacePersistenciaHotel {
-    + inserir(hotel: Hotel*) : bool
-    + listar() : vector<HotelDTO*>
-    + pesquisar(id: int) : optional<HotelDTO>
-    + atualizar(id: int, hotel: Hotel) : bool
-  }
-
-  class HotelDTO {
-    - hotelId : int
-    - nome : string
-    - endereco : string
-    - telefone : string
-    - codigo : string
-  }
-}
-
-package Quarto {
-  interface InterfaceApresentacaoQuarto {
-    + setControladoraServicoQuarto(svc: InterfaceServicoQuarto*) : void
-    + exibirMenu() : void
-  }
-  interface InterfaceServicoQuarto {
-    + criar() : bool
-    + pesquisar() : bool
-    + editar() : bool
-    + remover() : bool
-  }
-  interface InterfacePersistenciaQuarto {
-    + inserir(quarto: Quarto) : bool
-    + listar() : vector<QuartoDTO>
-    + pesquisar(id: int) : optional<QuartoDTO>
-    + atualizar(id: int, quarto: Quarto) : bool
-    + excluir(id: int) : bool
-  }
-
-  class ControladoraApresentacaoQuarto implements InterfaceApresentacaoQuarto
-  class ControladoraServicoQuarto implements InterfaceServicoQuarto
-  class ControladoraPersistenciaQuarto
-  class QuartoDTO
-}
-
-package Reserva {
-  interface InterfaceApresentacaoReserva {
-    + setControladoraServicoReserva(svc: InterfaceServicoReserva*) : void
-    + exibirMenu() : void
-  }
-  interface InterfaceServicoReserva {
-    + criar() : bool
-    + pesquisar() : bool
-    + editar() : bool
-    + remover() : bool
-  }
-  interface InterfacePersistenciaReserva {
-    + inserir(reserva: Reserva) : bool
-    + listar() : vector<ReservaDTO>
-    + pesquisar(id: int) : optional<ReservaDTO>
-    + atualizar(id: int, reserva: Reserva) : bool
-    + excluir(id: int) : bool
-  }
-
-  class ControladoraApresentacaoReserva implements InterfaceApresentacaoReserva
-  class ControladoraServicoReserva implements InterfaceServicoReserva
-  class ControladoraPersistenciaReserva
-  class ReservaDTO
-}
-
-package Solicitacao {
-  class SolicitacaoHospedagem {
-    - hospedeId : string
-    - hotelId : string
-    - quartoId : string
-    - chegada : Data
-    - partida : Data
-    - status : StatusSolicitacaoHospedagem
-    - motivoRecusa : string
-    + set*/get* : ...
-  }
-
-  class ControladoraPersistenciaSolicitacaoHospedagem {
-    + inicializar() : void
-    + salvar(s: SolicitacaoHospedagem) : void
-    + buscarPorEmail(email: string) : vector<SolicitacaoHospedagem>
-    + buscarPorStatus(status: int) : vector<SolicitacaoHospedagem>
-    + atualizar(s: SolicitacaoHospedagem) : void
-  }
-}
-
-package Dominio {
-  class Pessoa {
-    - nome : Nome
-    - email : Email
-    + setPessoaNome(Nome) : void
-    + setPessoaEmail(Email) : void
-    + getNome() : string
-    + getEmail() : string
-  }
-  class Gerente extends Pessoa {
-    - ramal : Ramal
-    - senha : Senha
-  }
-  class Hospede extends Pessoa {
-    - endereco : Endereco
-    - cartao : Cartao
-  }
-  class Hotel {
-    - nome : Nome
-    - endereco : Endereco
-    - telefone : Telefone
-    - codigo : Codigo
-  }
-  class Quarto {
-    - numero : Numero
-    - capacidade : Capacidade
-    - diaria : Dinheiro
-    - ramal : Ramal
-  }
-  class Reserva {
-    - chegada : Data
-    - partida : Data
-    - dinheiro : Dinheiro
-    - codigo : Codigo
-  }
-
-  class Nome
-  class Email
-  class Ramal
-  class Senha
-  class Endereco
-  class Cartao
-  class Telefone
-  class Numero
-  class Capacidade
-  class Dinheiro
-  class Data
-  enum StatusSolicitacaoHospedagem {
-    PENDENTE
-    APROVADO
-    RECUSADO
-  }
-  class EnumConversor {
-    + StatusSolicitacaoHospedagemParaInteiro(status) : int
-    + InteiroParaStatusSolicitacaoHospedagem(v: int) : StatusSolicitacaoHospedagem
-  }
-}
-
-' Relationships
-Sistema --> ControladoraApresentacaoAcessoGerente
-Sistema --> ControladoraApresentacaoAcessoHospede
-ControladoraApresentacaoAcessoGerente --> InterfaceServicoAcesso
-ControladoraApresentacaoAcessoHospede --> InterfaceServicoAcesso
-
-ControladoraServicoAcessoGerente --> InterfacePersistenciaGerente
-ControladoraApresentacaoAutenticavel --> InterfaceServicoAutenticavel
-ControladoraServicoAutenticavel --> ControladoraPersistenciaGerente
-
-ControladoraApresentacaoGerente --> InterfaceServicoGerente
-ControladoraServicoGerente --> InterfacePersistenciaGerente
-ControladoraPersistenciaGerente --> BancoDeDados
-
-ControladoraApresentacaoHotel --> InterfaceServicoHotel
-ControladoraServicoHotel --> InterfacePersistenciaHotel
-ControladoraPersistenciaHotel --> BancoDeDados
-
-ControladoraApresentacaoHospede --> InterfaceServicoHospede
-ControladoraServicoHospede --> InterfacePersistenciaHospede
-ControladoraPersistenciaHospede --> BancoDeDados
-
-ControladoraApresentacaoQuarto --> InterfaceServicoQuarto
-ControladoraServicoQuarto --> InterfacePersistenciaQuarto
-ControladoraPersistenciaQuarto --> BancoDeDados
-
-ControladoraApresentacaoReserva --> InterfaceServicoReserva
-ControladoraServicoReserva --> InterfacePersistenciaReserva
-ControladoraPersistenciaReserva --> BancoDeDados
-
-ControladoraPersistenciaSolicitacaoHospedagem --> BancoDeDados
-ControladoraPersistenciaSolicitacaoHospedagem --> EnumConversor
-
-GerenteDTO ..> Gerente
-HotelDTO ..> Hotel
-ReservaDTO ..> Reserva
-QuartoDTO ..> Quarto
-HospedeDTO ..> Hospede
-
-Pessoa <|-- Gerente
-Pessoa <|-- Hospede
-
+package "Hotelaria" #LightGreen { 
+class SistemaHacker { 
+		- bool executando 
+		+ SistemaHacker()
+		+ void iniciar()
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class BancoDeDados { 
+		- sqlite3 *db 
+		- void tabelaGerente(sqlite3 *db)
+		- void tabelaHospede(sqlite3 *db)
+		- void tabelaHotel(sqlite3 *db)
+		- void tabelaQuarto(sqlite3 *db)
+		- void tabelaReserva(sqlite3 *db)
+		- void tabelaSolicitacoesDeHospedagem(sqlite3 *db)
+		+ sqlite3 *getConexao() const
+		+ bool abrindoConexao()
+		+ bool fechandoConexao()
+		+ void iniciar()
+		+ static bool EXISTE_TABELA_VALOR(string tabela, string coluna, string valor)
+		+ static int CONTAGEM_STRING(string tabela, string coluna, string valor)
+		+ static int CONTAGEM_INTEIRO(string tabela, string coluna, int valor)
+		+ static int CONTAGEM_INTEIRO_DUPLO(string tabela, string coluna1, int valor1, string coluna2, int valor2)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Capacidade { 
+		- int capacidadeInt
+		- void validar(int valor)
+		+ Capacidade() 
+		+ explicit Capacidade(const int &valor)
+		+ void setValor(const int &valor)
+		+ int getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Cartao { 
+		- string cartaoStr
+		- void validar(string valor)
+		+ Cartao() 
+		+ explicit Cartao(const string &valor)
+		+ void setValor(const string &valor)
+		+ string getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Codigo { 
+		- string codigoStr
+		- void validar(string valor)
+		+ Codigo() 
+		+ explicit Codigo(const string &valor)
+		+ void setValor(const string &valor)
+		+ string getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Data { 
+		- void validar()
+		+ int dia
+		+ int mes
+		+ int ano
+		+ static int const JAN 
+		+ static int const FEV 
+		+ static int const MAR 
+		+ static int const ABR 
+		+ static int const MAI 
+		+ static int const JUN 
+		+ static int const JUL 
+		+ static int const AGO 
+		+ static int const SET 
+		+ static int const OUT 
+		+ static int const NOV 
+		+ static int const DEZ 
+		+ Data() 
+		+ explicit Data(const string &valor)
+		+ string toString()
+		+ void setData(int d, int m, int a)
+		+ int getDia()
+		+ int getMes()
+		+ int getAno()
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Dinheiro { 
+		- int dinheiro
+		- void validar(int valor)
+		+ Dinheiro() 
+		+ explicit Dinheiro(const int &valor)
+		+ void setValor(int valor)
+		+ int getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Email { 
+		- string emailStr
+		- void validar(const string &valor)
+		+ Email() 
+		+ explicit Email(const string &valor)
+		+ void setValor(const string &valor)
+		+ string getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Endereco { 
+		- string enderecoStr
+		- void validar(string valor)
+		+ Endereco() 
+		+ explicit Endereco(const string &valor)
+		+ void setValor(const string &valor)
+		+ string getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Nome { 
+		- string nomeStr
+		- void validar(const string &valor)
+		+ Nome() 
+		+ explicit Nome(const string &valor)
+		+ void setValor(const string &valor)
+		+ string getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Numero { 
+		- string numeroStr
+		- void validar(string valor)
+		+ Numero() 
+		+ explicit Numero(const string &valor)
+		+ void setValor(const string &valor)
+		+ string getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Ramal { 
+		- string ramalStr
+		- void validar(const string &valor)
+		+ Ramal() 
+		+ explicit Ramal(const string &valor)
+		+ void setValor(const string &valor)
+		+ string getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Senha { 
+		- string senhaStr
+		- void validar(string valor)
+		+ Senha() 
+		+ explicit Senha(const string &valor)
+		+ void setValor(const string &valor)
+		+ string getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Telefone { 
+		- string telefoneStr
+		- void validar(string valor)
+		+ Telefone() 
+		+ explicit Telefone(const string &valor)
+		+ void setValor(const string &valor)
+		+ string getValor() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Gerente { 
+		- Ramal ramal
+		- Senha senha
+		+ Gerente()
+		+ Gerente(Nome nomePessoaObj, Email emailPessoaObj, Ramal ramal, Senha senha)
+		+ Gerente(GerenteDTO &gerente_dto)
+		+ void setNome(const Nome &newNome)
+		+ void setEmail(const Email &newEmail)
+		+ void setRamal(const Ramal &newRamal)
+		+ void setSenha(const Senha &newSenha)
+		+ string getRamal() const
+		+ string getSenha() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Hospede { 
+		- Endereco endereco
+		- Cartao cartao
+		+ Hospede()
+		+ Hospede(Nome nomePessoaObj, Email emailPessoaObj, Endereco endereco, Cartao cartao)
+		+ Hospede(HospedeDTO &hospede_dto)
+		+ void setNome(const Nome &newNome)
+		+ void setEmail(const Email &newEmail)
+		+ void setEndereco(const Endereco &newEndereco)
+		+ void setCartao(const Cartao &newCartao)
+		+ string getEndereco() const
+		+ string getCartao() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Hotel { 
+		- Nome nome
+		- Endereco endereco
+		- Telefone telefone
+		- Codigo codigo
+		- int gerente_id
+		+ Hotel() 
+		+ Hotel(Nome nome, Endereco endereco, Telefone telefone, Codigo codigo, int gerente_id)
+		+ Hotel(HotelDTO &hotel_dto)
+		+ void setNome(const Nome &newNome)
+		+ void setEndereco(const Endereco &newEndereco)
+		+ void setTelefone(const Telefone &newTelefone)
+		+ void setCodigo(const Codigo &newCodigo)
+		+ string getNome() const
+		+ string getEndereco() const
+		+ string getTelefone() const
+		+ string getCodigo() const
+		+ void setGerenteId(const int &newGerenteId)
+		+ int getGerenteId() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Pessoa { 
+		# Nome nome
+		# Email email
+		+ Pessoa(Nome nomeObj, Email emailObj)
+		+ void setPessoaNome(const Nome &valor)
+		+ void setPessoaEmail(const Email &valor)
+		+ string getNome() const
+		+ string getEmail() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Quarto { 
+		- Numero numero
+		- Capacidade capacidade
+		- Dinheiro diaria
+		- Ramal ramal
+		- int hotel_id
+		+ Quarto() 
+		+ Quarto(Numero numero, Capacidade capacidade, Dinheiro diaria, Ramal ramal, int hotel_id)
+		+ Quarto(QuartoDTO &quarto_dto)
+		+ void setNumero(const Numero &newNumero)
+		+ void setCapacidade(const Capacidade &newCapacidade)
+		+ void setDiaria(const Dinheiro &newDiaria)
+		+ void setRamal(const Ramal &newRamal)
+		+ void setHotelID(const int hotel_id)
+		+ string getNumero() const
+		+ int getCapacidade() const
+		+ int getDiaria() const
+		+ string getRamal() const
+		+ int getHotelID() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Reserva { 
+		- Data chegada
+		- Data partida
+		- Dinheiro dinheiro
+		- Codigo codigo
+		+ Reserva() 
+		+ Reserva(Data chegada, Data partida, Dinheiro dinheiro, Codigo codigo)
+		+ Reserva(ReservaDTO &reserva_dto)
+		+ void setChegada(const Data &newChegada)
+		+ void setPartida(const Data &newPartida)
+		+ void setDinheiro(const Dinheiro &newDinheiro)
+		+ void setCodigo(const Codigo &newCodigo)
+		+ Data getChegada() const
+		+ Data getPartida() const
+		+ int getDinheiro() const
+		+ string getCodigo() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class SolicitacaoHospedagem { 
+		- int hospedeId
+		- int hotelId
+		- int quartoId
+		- Data chegada
+		- Data partida
+		- StatusSolicitacaoHospedagem status
+		- string motivoRecusa
+		+ SolicitacaoHospedagem() 
+		+ SolicitacaoHospedagem( const int &hospedeId, const int &hotelId, const int &quartoId, const Data &chegada, const Data &partida, const StatusSolicitacaoHospedagem status, const string &motivoRecusa )
+		+ SolicitacaoHospedagem(SolicitacaoHospedagemDTO &solicitacao_hospedagem_dto)
+		+ void setHospedeId(const int &valor)
+		+ void setHotelId(const int &valor)
+		+ void setQuartoId(const int &valor)
+		+ void setChegada(const Data &valor)
+		+ void setPartida(const Data &valor)
+		+ void setStatus(StatusSolicitacaoHospedagem valor)
+		+ void setMotivoRecusa(const string &valor)
+		+ int getHospedeId() const
+		+ int getHotelId() const
+		+ int getQuartoId() const
+		+ Data getChegada() const
+		+ Data getPartida() const
+		+ StatusSolicitacaoHospedagem getStatus() const
+		+ string getMotivoRecusa() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class GerenteDTO { 
+		- int id
+		- string nome
+		- string email
+		- string ramal
+		- string senha
+		+ GerenteDTO() 
+		+ GerenteDTO(int id, string nome, string email, string ramal)
+		+ int getId() const
+		+ void setId(int valor)
+		+ string getNome() const
+		+ void setNome(const string &valor)
+		+ string getEmail() const
+		+ void setEmail(const string &valor)
+		+ string getRamal() const
+		+ void setRamal(const string &valor)
+		+ string getSenha() const
+		+ void setSenha(const string &valor)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class HospedeDTO { 
+		- int id
+		- string nome
+		- string email
+		- string endereco
+		- string cartao
+		+ HospedeDTO() 
+		+ HospedeDTO(int id, string nome, string email, string endereco, string cartao)
+		+ int getId() const
+		+ void setId(int valor)
+		+ string getNome() const
+		+ void setNome(const string &valor)
+		+ string getEmail() const
+		+ void setEmail(const string &valor)
+		+ string getEndereco() const
+		+ void setEndereco(const string &valor)
+		+ string getCartao() const
+		+ void setCartao(const string &valor)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class HotelDTO { 
+		- int id
+		- string nome
+		- string endereco
+		- string telefone
+		- string codigo
+		- int gerente_id
+		+ HotelDTO() 
+		+ HotelDTO(int id, string nome, string endereco, string telefone, string codigo, int gerenteid)
+		+ int getId() const
+		+ void setId(int valor)
+		+ string getNome() const
+		+ void setNome(const string &valor)
+		+ string getEndereco() const
+		+ void setEndereco(const string &valor)
+		+ string getTelefone() const
+		+ void setTelefone(const string &valor)
+		+ string getCodigo() const
+		+ void setCodigo(const string &valor)
+		+ int getGerenteID() const
+		+ void setGerenteID(int valor)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class PessoaDTO { 
+		- int pessoaId
+		- string nome
+		- string email
+		+ PessoaDTO() 
+		+ PessoaDTO(int pessoaId, string nome, string email)
+		+ int getPessoaId() const
+		+ void setPessoaId(int valor)
+		+ string getNome() const
+		+ void setNome(const string &valor)
+		+ string getEmail() const
+		+ void setEmail(const string &valor)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class QuartoDTO { 
+		- int id
+		- string numero
+		- int capacidade
+		- int dinheiro
+		- string ramal
+		- int hotel_id
+		+ QuartoDTO() 
+		+ QuartoDTO(int id, string numero, int capacidade, int dinheiro, string ramal, int hotel_id)
+		+ int getId() const
+		+ void setId(int valor)
+		+ string getNumero() const
+		+ void setNumero(const string &valor)
+		+ int getCapacidade() const
+		+ void setCapacidade(const int &valor)
+		+ int getDinheiro() const
+		+ void setDinheiro(const int &valor)
+		+ string getRamal() const
+		+ void setRamal(const string &valor)
+		+ int getHotelId() const
+		+ void setHotelId(int valor)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ReservaDTO { 
+		- int reservaId
+		- string chegada
+		- string partida
+		- int dinheiro
+		- string codigo
+		- int quarto_id
+		+ ReservaDTO() 
+		+ ReservaDTO(int reservaId, string chegada, string partida, int dinheiro, string codigo, int quarto_id)
+		+ int getId() const
+		+ void setId(int valor)
+		+ string getChegada() const
+		+ void setChegada(const string &valor)
+		+ string getPartida() const
+		+ void setPartida(const string &valor)
+		+ int getDinheiro() const
+		+ void setDinheiro(const int &valor)
+		+ string getCodigo() const
+		+ void setCodigo(const string &valor)
+		+ int getQuartoId() const
+		+ void setQuartoId(int valor)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class SolicitacaoHospedagemDTO { 
+		- int id
+		- Data chegada
+		- Data partida
+		- StatusSolicitacaoHospedagem status
+		- string motivoRecusa
+		- int hospede_id
+		- int hotel_id
+		- int quarto_id
+		+ SolicitacaoHospedagemDTO() 
+		+ SolicitacaoHospedagemDTO(int id, Data chegada, Data partida, StatusSolicitacaoHospedagem (status), string motivoRecusa, int hospede_id, int hotel_id, int quarto_id)
+		+ int setId() const
+		+ void getId(int valor)
+		+ Data getChegada() const
+		+ void setChegada(const Data &valor)
+		+ Data getPartida() const
+		+ void setPartida(const Data &valor)
+		+ StatusSolicitacaoHospedagem getStatus() const
+		+ void setStatus(const StatusSolicitacaoHospedagem &valor)
+		+ string getMotivoRecusa() const
+		+ void setMotivoRecusa(const string &valor)
+		+ int getHospedeId() const
+		+ void setHospedeId(int valor)
+		+ int getHotelId() const
+		+ void setHotelId(int valor)
+		+ int getQuartoId() const
+		+ void setQuartoId(int valor)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Sistema { 
+		- bool executando 
+		- bool gerente_autenticado 
+		- int gerente_id
+		+ Sistema()
+		+ void exibirMenu()
+		+ void iniciar()
+		+ void setGerenteID(int valor)
+		+ void setGerenteAutenticado(bool valor)
+		+ bool getGerenteID()
+		+ bool getGerenteAutenticado()
+		+ static constexpr int MAXIMO_HOTEL_POR_GERENTE 
+		+ static constexpr int MAXIMO_QUARTOS_POR_HOTEL 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class SistemaSessao { 
+		- InterfaceApresentacaoAcessoGerente *apresentacao_acesso_gerente
+		- InterfaceApresentacaoAcessoHospede *apresentacao_acesso_hospede
+		- InterfaceApresentacaoAutenticavel *apresentacao_autenticavel
+		- InterfaceApresentacaoGerente *apresentacao_gerente
+		- InterfaceApresentacaoHospede *apresentacao_hospede
+		- InterfaceApresentacaoHotel *apresentacao_hotel
+		- InterfaceApresentacaoQuarto *apresentacao_quarto
+		- InterfaceApresentacaoReserva *apresentacao_reserva
+		- int gerente_id
+		- int hotel_id
+		- SistemaSessao()
+		- SistemaSessao(const SistemaSessao &) 
+		- SistemaSessao &operator
+		+ static SistemaSessao &getInstance()
+		+ void setGerenteId(int id)
+		+ int getGerenteId() const
+		+ void setHotelId(int id)
+		+ int getHoteleId() const
+		+ void setControladoraApresentacaoAcessoGerente(InterfaceApresentacaoAcessoGerente *apresentacao_acesso_gerente)
+		+ void setControladoraApresentacaoAcessoHospede(InterfaceApresentacaoAcessoHospede *apresentacao_acesso_hospede)
+		+ void setControladoraApresentacao(InterfaceApresentacaoAutenticavel *apresentacao_autenticavel)
+		+ void setControladoraApresentacao(InterfaceApresentacaoGerente *apresentacao_gerente)
+		+ void setControladoraApresentacao(InterfaceApresentacaoHospede *apresentacao_hospede)
+		+ void setControladoraApresentacao(InterfaceApresentacaoHotel *apresentacao_hotel)
+		+ void setControladoraApresentacao(InterfaceApresentacaoQuarto *apresentacao_quarto)
+		+ void setControladoraApresentacao(InterfaceApresentacaoReserva *apresentacao_reserva)
+		+ InterfaceApresentacaoAcessoGerente *getControladoraApresentacaoAcessoGerente()
+		+ InterfaceApresentacaoAcessoHospede *getControladoraApresentacaoAcessoHospede()
+		+ InterfaceApresentacaoAutenticavel *getControladoraApresentacaoAutenticavel()
+		+ InterfaceApresentacaoGerente *getControladoraApresentacaoGerente()
+		+ InterfaceApresentacaoHospede *getControladoraApresentacaoHospede()
+		+ InterfaceApresentacaoHotel *getControladoraApresentacaoHotel()
+		+ InterfaceApresentacaoQuarto *getControladoraApresentacaoQuarto()
+		+ InterfaceApresentacaoReserva *getControladoraApresentacaoReserva()
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraPersistenciaSolicitacaoHospedagem { 
+		+ static void salvar(const SolicitacaoHospedagem &status)
+		+ static void atualizar(const SolicitacaoHospedagem &status)
+		+ static vector<SolicitacaoHospedagem> buscarPorEmail(const string &email)
+		+ static vector<SolicitacaoHospedagem> buscarPorStatus(int status)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceApresentacaoAcessoGerente { 
+		+ virtual void exibirMenu() 
+		+ virtual void exibirMenuGerenciador() 
+		+ virtual void autenticarHacker() 
+		+ virtual ~InterfaceApresentacaoAcessoGerente() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceApresentacaoAcessoHospede { 
+		+ virtual void exibirMenu() 
+		+ virtual void opcoesDeHospedagem() 
+		+ virtual void solicitandoHospedagem() 
+		+ virtual ~InterfaceApresentacaoAcessoHospede() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraApresentacaoAcessoGerente { 
+		- bool estaAutenticado 
+		+ void exibirMenu() override
+		+ void exibirMenuGerenciador() override
+		+ void autenticarHacker() override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraApresentacaoAcessoHospede { 
+		- InterfaceApresentacaoHospede *apresentacao_hospede
+		+ void exibirMenu() override
+		+ void opcoesDeHospedagem() override
+		+ void solicitandoHospedagem() override
+		+ void statusDaSolicitandoHospedagem() const
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceApresentacaoAutenticavel { 
+		+ virtual void setControladoraServicoAutenticavel(InterfaceServicoAutenticavel *) 
+		+ virtual void setEmailDoGerente(const string &email) 
+		+ virtual string getEmailDOGerente() 
+		+ virtual void setEstaAutenticado(bool estaAutenticado) 
+		+ virtual bool getEstaAutenticado() 
+		+ virtual bool autenticar() 
+		+ virtual InterfaceServicoAutenticavel *getHacke() 
+		+ virtual ~InterfaceApresentacaoAutenticavel() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfacePersistenciaAutenticavel { 
+		+ virtual bool autenticar(const string &email, const string &senha) 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceServicoAutenticavel { 
+		+ virtual void setControladoraPersistencia(InterfacePersistenciaAutenticavel *persistencia) 
+		+ virtual bool autenticar(const Email &email, const Senha &senha) 
+		+ virtual ~InterfaceServicoAutenticavel() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraApresentacaoAutenticavel { 
+		- InterfaceServicoAutenticavel *servico
+		- bool estaAutenticado 
+		- string gerente_email
+		+ void setControladoraServicoAutenticavel(InterfaceServicoAutenticavel *servico) override
+		+ void setEmailDoGerente(const string &email) override
+		+ string getEmailDOGerente() override
+		+ void setEstaAutenticado(bool estaAutenticado) override
+		+ bool getEstaAutenticado() override
+		+ bool autenticar() override
+		+ InterfaceServicoAutenticavel *getHacke() override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraPersistenciaAutenticavel { 
+		+ bool autenticar(const string &email, const string &senha) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraServicoAutenticavel { 
+		- InterfacePersistenciaAutenticavel *persistencia
+		+ void setControladoraPersistencia(InterfacePersistenciaAutenticavel *persistencia) override
+		+ bool autenticar(const Email &email, const Senha &senha) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceFabricaGerenciavel { 
+		+ virtual unique_ptr<MenuCRUD> criar() 
+		+ virtual ~InterfaceFabricaGerenciavel() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceApresentacaoGerente { 
+		+ virtual void setControladoraServicoGerente(InterfaceServicoGerente *servico) 
+		+ virtual void exibirMenuCRUD() 
+		+ virtual bool criar() 
+		+ virtual void listar() 
+		+ virtual void atualizar() 
+		+ virtual void remover() 
+		+ virtual void avaliarSolicitacoes() 
+		+ virtual ~InterfaceApresentacaoGerente() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfacePersistenciaGerente { 
+		+ virtual bool inserir(const Gerente &gerente) 
+		+ virtual bool autenticar(const string &email, const string &senha) 
+		+ virtual bool atualizar(const Email &email, const Gerente &gerente) 
+		+ virtual bool excluir(const int &id) 
+		+ virtual vector<GerenteDTO> listar() 
+		+ virtual optional<GerenteDTO> pesquisarPorID(const int &id) 
+		+ virtual optional<GerenteDTO> pesquisarPorEmail(const string email) 
+		+ virtual bool existeEmail(const string &email) 
+		+ virtual ~InterfacePersistenciaGerente() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceServicoGerente { 
+		+ virtual void setControladoraPersistencia(InterfacePersistenciaGerente *persistencia) 
+		+ virtual bool criar(const Gerente &gerente) 
+		+ virtual bool editar(const Email &email, const Gerente &gerenteAtualizado) 
+		+ virtual bool remover(const int &id) 
+		+ virtual vector<GerenteDTO> listarTodos() 
+		+ virtual optional<GerenteDTO> pesquisar(const int &id) 
+		+ virtual optional<GerenteDTO> pesquisarPorEmail(const string email) 
+		+ virtual ~InterfaceServicoGerente() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraApresentacaoGerente { 
+		- InterfaceServicoGerente *servico
+		- bool executando 
+		- bool estaAutenticado 
+		+ void setControladoraServicoGerente(InterfaceServicoGerente *servico) override
+		+ void exibirMenuCRUD() override
+		+ bool criar() override
+		+ void listar() override
+		+ void atualizar() override
+		+ void remover() override
+		+ void avaliarSolicitacoes() override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraPersistenciaGerente { 
+		+ bool inserir(const Gerente &gerente) override
+		+ bool autenticar(const string &email, const string &senha) override
+		+ bool atualizar(const Email &email, const Gerente &gerente) override
+		+ bool excluir(const int &id) override
+		+ vector<GerenteDTO> listar() override
+		+ optional<GerenteDTO> pesquisarPorID(const int &id) override
+		+ optional<GerenteDTO> pesquisarPorEmail(const string email) override
+		+ bool existeEmail(const string &email) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraServicoGerente { 
+		- InterfacePersistenciaGerente *persistencia 
+		- bool executando 
+		+ void setControladoraPersistencia(InterfacePersistenciaGerente *persistencia) override
+		+ bool criar(const Gerente &gerente) override
+		+ bool editar(const Email &email, const Gerente &gerenteAtualizado) override
+		+ bool remover(const int &id) override
+		+ vector<GerenteDTO> listarTodos() override
+		+ optional<GerenteDTO> pesquisar(const int &id) override
+		+ optional<GerenteDTO> pesquisarPorEmail(const string email) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceApresentacaoHospede { 
+		+ virtual void setControladoraServicoHospede(InterfaceServicoHospede *) 
+		+ virtual void exibirMenuCRUD() 
+		+ virtual bool criar() 
+		+ virtual void listar() 
+		+ virtual void atualizar() 
+		+ virtual void remover() 
+		+ virtual ~InterfaceApresentacaoHospede() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfacePersistenciaHospede { 
+		+ virtual bool inserir(const Hospede &hospede) 
+		+ virtual bool atualizar(const Email &email, const Hospede &hospede) 
+		+ virtual bool excluir(const int &id) 
+		+ virtual vector<HospedeDTO> listar() 
+		+ virtual optional<HospedeDTO> pesquisar(const int &id) 
+		+ virtual optional<HospedeDTO> pesquisarPorEmail(const string email) 
+		+ virtual bool existeEmail(const string &email) 
+		+ virtual ~InterfacePersistenciaHospede() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceServicoHospede { 
+		+ virtual void setControladoraPersistencia(InterfacePersistenciaHospede *persistencia) 
+		+ virtual bool criar(const Hospede &hospede) 
+		+ virtual bool editar(const Email &email, const Hospede &hospedeAtualizado) 
+		+ virtual bool remover(const int &id) 
+		+ virtual vector<HospedeDTO> listarTodos() 
+		+ virtual optional<HospedeDTO> pesquisar(const int &id) 
+		+ virtual ~InterfaceServicoHospede() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraApresentacaoHospede { 
+		- InterfaceServicoHospede *servico
+		- bool executando 
+		+ void setControladoraServicoHospede(InterfaceServicoHospede *servico) override
+		+ void exibirMenuCRUD() override
+		+ bool criar() override
+		+ void listar() override
+		+ void atualizar() override
+		+ void remover() override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraPersistenciaHospede { 
+		+ bool inserir(const Hospede &hospede) override
+		+ bool atualizar(const Email &email, const Hospede &hospede) override
+		+ bool excluir(const int &id) override
+		+ vector<HospedeDTO> listar() override
+		+ optional<HospedeDTO> pesquisar(const int &id) override
+		+ optional<HospedeDTO> pesquisarPorEmail(const string email) override
+		+ bool existeEmail(const string &email) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraServicoHospede { 
+		- InterfacePersistenciaHospede *persistencia 
+		+ void setControladoraPersistencia(InterfacePersistenciaHospede *persistencia) override
+		+ bool criar(const Hospede &hospede) override
+		+ bool editar(const Email &email, const Hospede &hospedeAtualizado) override
+		+ bool remover(const int &id) override
+		+ vector<HospedeDTO> listarTodos() override
+		+ optional<HospedeDTO> pesquisar(const int &id) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceApresentacaoHotel { 
+		+ virtual void setControladoraServicoHotel(InterfaceServicoHotel *) 
+		+ virtual void exibirMenuCRUD() 
+		+ virtual void acessar() 
+		+ virtual void criar(int gerente_id) 
+		+ virtual void listar() 
+		+ virtual void atualizar() 
+		+ virtual void remover() 
+		+ virtual ~InterfaceApresentacaoHotel() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfacePersistenciaHotel { 
+		+ virtual bool inserir(const Hotel &hotel) 
+		+ virtual bool atualizar(const int &id, const Hotel &hotel) 
+		+ virtual bool excluir(const int &id) 
+		+ virtual vector<HotelDTO> listar() 
+		+ virtual optional<HotelDTO> pesquisar(const int &id) 
+		+ virtual bool existeCodigo(const string &codigo) 
+		+ virtual int getQuantidadeDeHoteisDoGerente(int gerente_id) 
+		+ virtual ~InterfacePersistenciaHotel() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceServicoHotel { 
+		+ virtual void setControladoraPersistencia(InterfacePersistenciaHotel *persistencia) 
+		+ virtual bool criar(const Hotel &hotel) 
+		+ virtual bool existeCodigo(const string &codigo) 
+		+ virtual bool editar(const int &id, const Hotel &hotel) 
+		+ virtual bool remover(const int &id) 
+		+ virtual vector<HotelDTO> listarTodos() 
+		+ virtual optional<HotelDTO> pesquisar(const int &id) 
+		+ virtual int getQuantidadeDeHoteisDoGerente(int gerente_id) 
+		+ virtual ~InterfaceServicoHotel() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraApresentacaoHotel { 
+		- InterfaceServicoHotel *servico
+		- bool executando 
+		- bool estaAutenticado 
+		+ void setControladoraServicoHotel(InterfaceServicoHotel *) override
+		+ void exibirMenuCRUD() override
+		+ void acessar() override
+		+ void criar(int gerente_id) override
+		+ void listar() override
+		+ void atualizar() override
+		+ void remover() override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraPersistenciaHotel { 
+		+ bool inserir(const Hotel &hotel) override
+		+ bool atualizar(const int &id, const Hotel &hotel) override
+		+ bool excluir(const int &id) override
+		+ vector<HotelDTO> listar() override
+		+ optional<HotelDTO> pesquisar(const int &id) override
+		+ bool existeCodigo(const string &codigo) override
+		+ int getQuantidadeDeHoteisDoGerente(int gerente_id) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraServicoHotel { 
+		- InterfacePersistenciaHotel *persistencia
+		- bool executando 
+		+ void setControladoraPersistencia(InterfacePersistenciaHotel *persistencia) override
+		+ bool criar(const Hotel &hotel) override
+		+ bool existeCodigo(const string &codigo) override
+		+ bool editar(const int &id, const Hotel &hotel) override
+		+ bool remover(const int &id) override
+		+ vector<HotelDTO> listarTodos() override
+		+ int getQuantidadeDeHoteisDoGerente(int gerente_id) override
+		+ optional<HotelDTO> pesquisar(const int &id) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceApresentacaoQuarto { 
+		+ virtual void setControladoraServicoQuarto(InterfaceServicoQuarto *) 
+		+ virtual void exibirMenuCRUD() 
+		+ virtual bool criar(int gerente_id,int hotel_id) 
+		+ virtual void listar() 
+		+ virtual void atualizar() 
+		+ virtual void remover() 
+		+ virtual ~InterfaceApresentacaoQuarto() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfacePersistenciaQuarto { 
+		+ virtual bool inserir(const Quarto &quarto) 
+		+ virtual bool atualizar(const int &id, const Quarto &quarto) 
+		+ virtual bool excluir(const int &id) 
+		+ virtual vector<QuartoDTO> listar() 
+		+ virtual optional<QuartoDTO> pesquisar(const int &id) 
+		+ virtual ~InterfacePersistenciaQuarto() 
+		+ virtual int getQuantidadeDeQuartosDoHotel( int hotel_id) 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceServicoQuarto { 
+		+ virtual void setControladoraPersistencia(InterfacePersistenciaQuarto *persistencia) 
+		+ virtual bool criar(const Quarto &quarto) 
+		+ virtual bool editar(const int &id, const Quarto &quarto) 
+		+ virtual bool remover(const int &id) 
+		+ virtual vector<QuartoDTO> listarTodos() 
+		+ virtual optional<QuartoDTO> pesquisar(const int &id) 
+		+ virtual int getQuantidadeDeQuartosDoHotel( int hotel_id) 
+		+ virtual ~InterfaceServicoQuarto() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraApresentacaoQuarto { 
+		- InterfaceServicoQuarto *servico
+		- bool executando 
+		+ void setControladoraServicoQuarto(InterfaceServicoQuarto *servico) override
+		+ void exibirMenuCRUD() override
+		+ bool criar(int gerente_id,int hotel_id) override
+		+ void listar() override
+		+ void atualizar() override
+		+ void remover() override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraPersistenciaQuarto { 
+		+ bool inserir(const Quarto &quarto) override
+		+ bool atualizar(const int &id, const Quarto &quarto) override
+		+ bool excluir(const int &id) override
+		+ vector<QuartoDTO> listar() override
+		+ optional<QuartoDTO> pesquisar(const int &id) override
+		+ int getQuantidadeDeQuartosDoHotel( int hotel_id) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraServicoQuarto { 
+		- InterfacePersistenciaQuarto *persistencia
+		+ void setControladoraPersistencia(InterfacePersistenciaQuarto *persistencia) override
+		+ bool criar(const Quarto &quarto) override
+		+ bool editar(const int &id, const Quarto &quarto) override
+		+ bool remover(const int &id) override
+		+ vector<QuartoDTO> listarTodos() override
+		+ optional<QuartoDTO> pesquisar(const int &id) override
+		+ int getQuantidadeDeQuartosDoHotel( int hotel_id) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceApresentacaoReserva { 
+		+ virtual void setControladoraServicoReserva(InterfaceServicoReserva *controladora_servico_reserva) 
+		+ virtual void exibirMenuCRUD() 
+		+ virtual void criar() 
+		+ virtual void listar() 
+		+ virtual void atualizar() 
+		+ virtual void remover() 
+		+ virtual ~InterfaceApresentacaoReserva() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfacePersistenciaReserva { 
+		+ virtual bool inserir(const Reserva &reserva) 
+		+ virtual bool autenticar(const string &email, const string &senha) 
+		+ virtual bool atualizar(const int &id, const Reserva &reserva) 
+		+ virtual bool excluir(const int &id) 
+		+ virtual vector<ReservaDTO> listar() 
+		+ virtual optional<ReservaDTO> pesquisar(const int &id) 
+		+ virtual ~InterfacePersistenciaReserva() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface InterfaceServicoReserva { 
+		+ virtual void setControladoraPersistencia(InterfacePersistenciaReserva *persistencia) 
+		+ virtual bool criar(const Reserva &reserva) 
+		+ virtual bool editar(const int &id, const Reserva &reserva) 
+		+ virtual bool remover(const int &id) 
+		+ virtual vector<ReservaDTO> listarTodos() 
+		+ virtual optional<ReservaDTO> pesquisar(const int &id) 
+		+ virtual ~InterfaceServicoReserva() 
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraApresentacaoReserva { 
+		- InterfaceServicoReserva *servico
+		+ void setControladoraServicoReserva(InterfaceServicoReserva *) override
+		+ void exibirMenuCRUD() override
+		+ void criar() override
+		+ void listar() override
+		+ void atualizar() override
+		+ void remover() override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraPersistenciaReserva { 
+		+ bool inserir(const Reserva &reserva) override
+		+ bool autenticar(const string &email, const string &senha) override
+		+ bool atualizar(const int &id, const Reserva &reserva) override
+		+ bool excluir(const int &id) override
+		+ vector<ReservaDTO> listar() override
+		+ optional<ReservaDTO> pesquisar(const int &id) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class ControladoraServicoReserva { 
+		- InterfacePersistenciaReserva *persistencia
+		+ void setControladoraPersistencia(InterfacePersistenciaReserva *persistencia) override
+		+ bool criar(const Reserva &reserva) override
+		+ bool editar(const int &id, const Reserva &reserva) override
+		+ bool remover(const int &id) override
+		+ vector<ReservaDTO> listarTodos() override
+		+ optional<ReservaDTO> pesquisar(const int &id) override
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class EnumConversor { 
+		+ static int StatusSolicitacaoHospedagemParaInteiro(StatusSolicitacaoHospedagem status)
+		+ static StatusSolicitacaoHospedagem InteiroParaStatusSolicitacaoHospedagem(int valor)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+enum StatusSolicitacaoHospedagem { 
+PENDENTE
+APROVADO
+RECUSADO
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+enum MODOS { 
+MODO_PRODUCAO,
+MODO_SMOKE,
+MODO_HACKER
+	} 
+} 
+package ".Utils" #DarkRed { 
+class Utils { 
+		bool verificaSeENumero(const string &str)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+class Versao { 
+		- static constexpr uint64_t valor 
+		- static inline const string data 
+		+ static uint8_t patch()
+		+ static uint8_t minor()
+		+ static uint64_t major()
+		+ static uint64_t getValor()
+		+ static string getData()
+		+ static string getVersaoCompleta()
+	} 
+} 
+package ".Formato" #DarkBlue { 
+class Formato { 
+		void RepetirCaracter(int qntCaracteres, char c)
+		string RepetirCaracterMesmaLinha(int qntCaracteres, char c)
+		void TituloEmCaixa(const string &titulo)
+		void SeparadorDeCategoria(const string &titulo)
+		void OpcaoEmCaixa(const string &texto, const int &numero)
+		void OpcaoEmCaixa(const string &texto, const string &numero)
+		void OpcaoSimples(const string &texto, const int &numero)
+	} 
+} 
+package ".IO" #Orange { 
+class IO { 
+		string LerLinha()
+		string LerOpcao()
+		bool tentarNovamente()
+		void Println(const string &mensagem)
+		void Print(const string &mensagem)
+		void Println(string mensagem,string valor) 
+		void Println(string mensagem,int valor)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface ExibirMenu { 
+		+ virtual void exibirMenu() 
+	} 
+} 
+package "VisualizadorDeMenu" #Gray { 
+class Menu { 
+		- vector<MenuItem> menuItens
+		- int contador 
+		+ int adcionarItens(string nome)
+		+ vector<MenuItem> listar()
+		+ int executa(string tituloStr)
+	} 
+} 
+package "Hotelaria" #LightGreen { 
+interface MenuCRUD { 
+		+ virtual void criar() 
+		+ virtual void ler() 
+		+ virtual void atualizar() 
+		+ virtual void remover() 
+		+ virtual ~MenuCRUD() 
+	} 
+} 
+package "VisualizadorDeMenu" #Gray { 
+class MenuItem { 
+		- string nome
+		- string valor
+		- int valorConstante
+		+ MenuItem(string nomeStr, string valorStr, int valorConstanteInt)
+		+ string getNome()
+		+ string getValor()
+		+ int getValorConstante()
+	} 
+} 
+package "VisualizadorDeTabela" #Gold { 
+class Atributo { 
+		- string nome
+		- string valor
+		+ Atributo() 
+		+ Atributo(string nome, string valor)
+		+ void setNome(string nome)
+		+ void setValor(string valor)
+		+ string getNome()
+		+ string getValor()
+	} 
+} 
+package "VisualizadorDeTabela" #Gold { 
+class Linha { 
+		- vector<shared_ptr<Atributo> > atributos
+		+ Linha() 
+		+ void atributo(string nome, string valor)
+		+ void atributo(string nome, int valor)
+		+ vector<shared_ptr<Atributo> > getAtributos()
+	} 
+} 
+package "VisualizadorDeTabela" #Gold { 
+class Tabela { 
+		- vector<shared_ptr<Linha> > linhas
+		+ Tabela() 
+		+ Linha *criarObj()
+		+ void exibirTabela(string titulo)
+	} 
+} 
+package "VisualizadorDeTabela" #Gold { 
+class TamanhoAtributo { 
+		- string nome
+		- int tamanho 
+		+ TamanhoAtributo() 
+		+ TamanhoAtributo(string nome, int tamanho)
+		+ void setNome(string nome)
+		+ void setTamanho(int tamanho)
+		+ string getNome()
+		+ int getTamanho()
+	} 
+} 
+package "Teste" #Purple { 
+interface InterfaceDeTeste { 
+		- static int contTodalTestes
+		- static int contTodalTestesOk
+		- static int contTodalTestesProblema
+		- static vector<string> listaFalhas
+		+ static const int DEVE_DAR_ERRADO 
+		+ static const int DEVE_DAR_CERTO 
+		+ virtual void executar() 
+		+ virtual ~InterfaceDeTeste() 
+		+ static void checaResultado(int esperando_resultado, int resultado_teste)
+		+ static void apresentacaoTeste(const string &valor)
+		+ static void apresentacaoTeste(const int &valor)
+		+ static void registrarFalha(const string &dominio, const string &entrada, const string &erro)
+		+ static void mostrarRelatorioDeTestes()
+		+ static int getTestes()
+		+ static int getTestesOk()
+		+ static int getTestesProblema()
+	} 
+} 
+package "Teste" #Purple { 
+class SmokeTeste { 
+		+ void testarDominio(int esperando_resultado, const string &valor_teste, const string &dominio, function<void()> funcao_validacao )
+		+ template<typename T> void testarDominio(int esperando_resultado, const T &valor_teste, const string &dominio, function<void()> funcao_validacao)
+		+ void testarEntidade(int esperando_resultado, const string &valor_teste, const string &entidade, function<void()> funcao_validacao)
+		+ template<typename T> void testarEntidade(int esperando_resultado, const T &valor_teste, const string &entidade, function<void()> funcao_validacao)
+	} 
+} 
+Hotelaria.Gerente  --|> Hotelaria.Pessoa : Herança
+Hotelaria.Hospede  --|> Hotelaria.Pessoa : Herança
+Hotelaria.ControladoraApresentacaoAcessoGerente  ..|> Hotelaria.InterfaceApresentacaoAcessoGerente : Implementação
+Hotelaria.ControladoraApresentacaoAcessoHospede  ..|> Hotelaria.InterfaceApresentacaoAcessoHospede : Implementação
+Hotelaria.ControladoraApresentacaoAutenticavel  ..|> Hotelaria.InterfaceApresentacaoAutenticavel : Implementação
+Hotelaria.ControladoraPersistenciaAutenticavel  ..|> Hotelaria.InterfacePersistenciaAutenticavel : Implementação
+Hotelaria.ControladoraServicoAutenticavel  ..|> Hotelaria.InterfaceServicoAutenticavel : Implementação
+Hotelaria.ControladoraApresentacaoGerente  ..|> Hotelaria.InterfaceApresentacaoGerente : Implementação
+Hotelaria.ControladoraPersistenciaGerente  ..|> Hotelaria.InterfacePersistenciaGerente : Implementação
+Hotelaria.ControladoraServicoGerente  ..|> Hotelaria.InterfaceServicoGerente : Implementação
+Hotelaria.ControladoraApresentacaoHospede  ..|> Hotelaria.InterfaceApresentacaoHospede : Implementação
+Hotelaria.ControladoraPersistenciaHospede  ..|> Hotelaria.InterfacePersistenciaHospede : Implementação
+Hotelaria.ControladoraServicoHospede  ..|> Hotelaria.InterfaceServicoHospede : Implementação
+Hotelaria.ControladoraApresentacaoHotel  ..|> Hotelaria.InterfaceApresentacaoHotel : Implementação
+Hotelaria.ControladoraPersistenciaHotel  ..|> Hotelaria.InterfacePersistenciaHotel : Implementação
+Hotelaria.ControladoraServicoHotel  ..|> Hotelaria.InterfaceServicoHotel : Implementação
+Hotelaria.ControladoraApresentacaoQuarto  ..|> Hotelaria.InterfaceApresentacaoQuarto : Implementação
+Hotelaria.ControladoraPersistenciaQuarto  ..|> Hotelaria.InterfacePersistenciaQuarto : Implementação
+Hotelaria.ControladoraServicoQuarto  ..|> Hotelaria.InterfaceServicoQuarto : Implementação
+Hotelaria.ControladoraApresentacaoReserva  ..|> Hotelaria.InterfaceApresentacaoReserva : Implementação
+Hotelaria.ControladoraPersistenciaReserva  ..|> Hotelaria.InterfacePersistenciaReserva : Implementação
+Hotelaria.ControladoraServicoReserva  ..|> Hotelaria.InterfaceServicoReserva : Implementação
+Hotelaria.Gerente  --* Hotelaria.Ramal : Composição
+Hotelaria.Gerente  --* Hotelaria.Senha : Composição
+Hotelaria.Gerente  --* Hotelaria.Email : Uso
+Hotelaria.Gerente  --* Hotelaria.Nome : Uso
+Hotelaria.Gerente  --* Hotelaria.GerenteDTO : Uso
+Hotelaria.Hospede  --* Hotelaria.Cartao : Composição
+Hotelaria.Hospede  --* Hotelaria.Endereco : Composição
+Hotelaria.Hospede  --* Hotelaria.Email : Uso
+Hotelaria.Hospede  --* Hotelaria.Nome : Uso
+Hotelaria.Hospede  --* Hotelaria.HospedeDTO : Uso
+Hotelaria.Hotel  --* Hotelaria.Codigo : Composição
+Hotelaria.Hotel  --* Hotelaria.Endereco : Composição
+Hotelaria.Hotel  --* Hotelaria.Nome : Composição
+Hotelaria.Hotel  --* Hotelaria.Telefone : Composição
+Hotelaria.Hotel  --* Hotelaria.HotelDTO : Uso
+Hotelaria.Pessoa  --* Hotelaria.Email : Composição
+Hotelaria.Pessoa  --* Hotelaria.Nome : Composição
+Hotelaria.Quarto  --* Hotelaria.Capacidade : Composição
+Hotelaria.Quarto  --* Hotelaria.Dinheiro : Composição
+Hotelaria.Quarto  --* Hotelaria.Numero : Composição
+Hotelaria.Quarto  --* Hotelaria.Ramal : Composição
+Hotelaria.Quarto  --* Hotelaria.QuartoDTO : Uso
+Hotelaria.Reserva  --* Hotelaria.Codigo : Composição
+Hotelaria.Reserva  --* Hotelaria.Data : Composição
+Hotelaria.Reserva  --* Hotelaria.Dinheiro : Composição
+Hotelaria.Reserva  --* Hotelaria.ReservaDTO : Uso
+Hotelaria.SolicitacaoHospedagem  --* Hotelaria.Data : Composição
+Hotelaria.SolicitacaoHospedagem  --* Hotelaria.StatusSolicitacaoHospedagem : Composição
+Hotelaria.SolicitacaoHospedagem  --* Hotelaria.SolicitacaoHospedagemDTO : Uso
+Hotelaria.SolicitacaoHospedagemDTO  --* Hotelaria.Data : Composição
+Hotelaria.SolicitacaoHospedagemDTO  --* Hotelaria.StatusSolicitacaoHospedagem : Composição
+Hotelaria.SistemaSessao  --* Hotelaria.InterfaceApresentacaoAcessoGerente : Composição
+Hotelaria.SistemaSessao  --* Hotelaria.InterfaceApresentacaoAcessoHospede : Composição
+Hotelaria.SistemaSessao  --* Hotelaria.InterfaceApresentacaoAutenticavel : Composição
+Hotelaria.SistemaSessao  --* Hotelaria.InterfaceApresentacaoGerente : Composição
+Hotelaria.SistemaSessao  --* Hotelaria.InterfaceApresentacaoHospede : Composição
+Hotelaria.SistemaSessao  --* Hotelaria.InterfaceApresentacaoHotel : Composição
+Hotelaria.SistemaSessao  --* Hotelaria.InterfaceApresentacaoQuarto : Composição
+Hotelaria.SistemaSessao  --* Hotelaria.InterfaceApresentacaoReserva : Composição
+Hotelaria.ControladoraPersistenciaSolicitacaoHospedagem  --* Hotelaria.SolicitacaoHospedagem : Uso
+Hotelaria.ControladoraApresentacaoAcessoHospede  --* Hotelaria.InterfaceApresentacaoHospede : Composição
+Hotelaria.InterfaceApresentacaoAutenticavel  --* Hotelaria.InterfaceServicoAutenticavel : Uso
+Hotelaria.InterfaceServicoAutenticavel  --* Hotelaria.Email : Uso
+Hotelaria.InterfaceServicoAutenticavel  --* Hotelaria.Senha : Uso
+Hotelaria.InterfaceServicoAutenticavel  --* Hotelaria.InterfacePersistenciaAutenticavel : Uso
+Hotelaria.ControladoraApresentacaoAutenticavel  --* Hotelaria.InterfaceServicoAutenticavel : Composição
+Hotelaria.ControladoraServicoAutenticavel  --* Hotelaria.InterfacePersistenciaAutenticavel : Composição
+Hotelaria.ControladoraServicoAutenticavel  --* Hotelaria.Email : Uso
+Hotelaria.ControladoraServicoAutenticavel  --* Hotelaria.Senha : Uso
+Hotelaria.InterfaceFabricaGerenciavel  --* Hotelaria.MenuCRUD : Uso
+Hotelaria.InterfaceApresentacaoGerente  --* Hotelaria.InterfaceServicoGerente : Uso
+Hotelaria.InterfacePersistenciaGerente  --* Hotelaria.Email : Uso
+Hotelaria.InterfacePersistenciaGerente  --* Hotelaria.Gerente : Uso
+Hotelaria.InterfacePersistenciaGerente  --* Hotelaria.GerenteDTO : Uso
+Hotelaria.InterfaceServicoGerente  --* Hotelaria.Email : Uso
+Hotelaria.InterfaceServicoGerente  --* Hotelaria.Gerente : Uso
+Hotelaria.InterfaceServicoGerente  --* Hotelaria.GerenteDTO : Uso
+Hotelaria.InterfaceServicoGerente  --* Hotelaria.InterfacePersistenciaGerente : Uso
+Hotelaria.ControladoraApresentacaoGerente  --* Hotelaria.InterfaceServicoGerente : Composição
+Hotelaria.ControladoraPersistenciaGerente  --* Hotelaria.Email : Uso
+Hotelaria.ControladoraPersistenciaGerente  --* Hotelaria.Gerente : Uso
+Hotelaria.ControladoraPersistenciaGerente  --* Hotelaria.GerenteDTO : Uso
+Hotelaria.ControladoraServicoGerente  --* Hotelaria.InterfacePersistenciaGerente : Composição
+Hotelaria.ControladoraServicoGerente  --* Hotelaria.Email : Uso
+Hotelaria.ControladoraServicoGerente  --* Hotelaria.Gerente : Uso
+Hotelaria.ControladoraServicoGerente  --* Hotelaria.GerenteDTO : Uso
+Hotelaria.InterfaceApresentacaoHospede  --* Hotelaria.InterfaceServicoHospede : Uso
+Hotelaria.InterfacePersistenciaHospede  --* Hotelaria.Email : Uso
+Hotelaria.InterfacePersistenciaHospede  --* Hotelaria.Hospede : Uso
+Hotelaria.InterfacePersistenciaHospede  --* Hotelaria.HospedeDTO : Uso
+Hotelaria.InterfaceServicoHospede  --* Hotelaria.Email : Uso
+Hotelaria.InterfaceServicoHospede  --* Hotelaria.Hospede : Uso
+Hotelaria.InterfaceServicoHospede  --* Hotelaria.HospedeDTO : Uso
+Hotelaria.InterfaceServicoHospede  --* Hotelaria.InterfacePersistenciaHospede : Uso
+Hotelaria.ControladoraApresentacaoHospede  --* Hotelaria.InterfaceServicoHospede : Composição
+Hotelaria.ControladoraPersistenciaHospede  --* Hotelaria.Email : Uso
+Hotelaria.ControladoraPersistenciaHospede  --* Hotelaria.Hospede : Uso
+Hotelaria.ControladoraPersistenciaHospede  --* Hotelaria.HospedeDTO : Uso
+Hotelaria.ControladoraServicoHospede  --* Hotelaria.InterfacePersistenciaHospede : Composição
+Hotelaria.ControladoraServicoHospede  --* Hotelaria.Email : Uso
+Hotelaria.ControladoraServicoHospede  --* Hotelaria.Hospede : Uso
+Hotelaria.ControladoraServicoHospede  --* Hotelaria.HospedeDTO : Uso
+Hotelaria.InterfaceApresentacaoHotel  --* Hotelaria.InterfaceServicoHotel : Uso
+Hotelaria.InterfacePersistenciaHotel  --* Hotelaria.Hotel : Uso
+Hotelaria.InterfacePersistenciaHotel  --* Hotelaria.HotelDTO : Uso
+Hotelaria.InterfaceServicoHotel  --* Hotelaria.Hotel : Uso
+Hotelaria.InterfaceServicoHotel  --* Hotelaria.HotelDTO : Uso
+Hotelaria.InterfaceServicoHotel  --* Hotelaria.InterfacePersistenciaHotel : Uso
+Hotelaria.ControladoraApresentacaoHotel  --* Hotelaria.InterfaceServicoHotel : Composição
+Hotelaria.ControladoraPersistenciaHotel  --* Hotelaria.Hotel : Uso
+Hotelaria.ControladoraPersistenciaHotel  --* Hotelaria.HotelDTO : Uso
+Hotelaria.ControladoraServicoHotel  --* Hotelaria.InterfacePersistenciaHotel : Composição
+Hotelaria.ControladoraServicoHotel  --* Hotelaria.Hotel : Uso
+Hotelaria.ControladoraServicoHotel  --* Hotelaria.HotelDTO : Uso
+Hotelaria.InterfaceApresentacaoQuarto  --* Hotelaria.InterfaceServicoQuarto : Uso
+Hotelaria.InterfacePersistenciaQuarto  --* Hotelaria.Quarto : Uso
+Hotelaria.InterfacePersistenciaQuarto  --* Hotelaria.QuartoDTO : Uso
+Hotelaria.InterfaceServicoQuarto  --* Hotelaria.Quarto : Uso
+Hotelaria.InterfaceServicoQuarto  --* Hotelaria.QuartoDTO : Uso
+Hotelaria.InterfaceServicoQuarto  --* Hotelaria.InterfacePersistenciaQuarto : Uso
+Hotelaria.ControladoraApresentacaoQuarto  --* Hotelaria.InterfaceServicoQuarto : Composição
+Hotelaria.ControladoraPersistenciaQuarto  --* Hotelaria.Quarto : Uso
+Hotelaria.ControladoraPersistenciaQuarto  --* Hotelaria.QuartoDTO : Uso
+Hotelaria.ControladoraServicoQuarto  --* Hotelaria.InterfacePersistenciaQuarto : Composição
+Hotelaria.ControladoraServicoQuarto  --* Hotelaria.Quarto : Uso
+Hotelaria.ControladoraServicoQuarto  --* Hotelaria.QuartoDTO : Uso
+Hotelaria.InterfaceApresentacaoReserva  --* Hotelaria.InterfaceServicoReserva : Uso
+Hotelaria.InterfacePersistenciaReserva  --* Hotelaria.Reserva : Uso
+Hotelaria.InterfacePersistenciaReserva  --* Hotelaria.ReservaDTO : Uso
+Hotelaria.InterfaceServicoReserva  --* Hotelaria.Reserva : Uso
+Hotelaria.InterfaceServicoReserva  --* Hotelaria.ReservaDTO : Uso
+Hotelaria.InterfaceServicoReserva  --* Hotelaria.InterfacePersistenciaReserva : Uso
+Hotelaria.ControladoraApresentacaoReserva  --* Hotelaria.InterfaceServicoReserva : Composição
+Hotelaria.ControladoraPersistenciaReserva  --* Hotelaria.Reserva : Uso
+Hotelaria.ControladoraPersistenciaReserva  --* Hotelaria.ReservaDTO : Uso
+Hotelaria.ControladoraServicoReserva  --* Hotelaria.InterfacePersistenciaReserva : Composição
+Hotelaria.ControladoraServicoReserva  --* Hotelaria.Reserva : Uso
+Hotelaria.ControladoraServicoReserva  --* Hotelaria.ReservaDTO : Uso
+Hotelaria.EnumConversor  --* Hotelaria.StatusSolicitacaoHospedagem : Uso
+VisualizadorDeMenu.Menu  --* VisualizadorDeMenu.MenuItem : Composição
+VisualizadorDeTabela.Linha  --* VisualizadorDeTabela.Atributo : Composição
+VisualizadorDeTabela.Tabela  --* VisualizadorDeTabela.Linha : Composição
 @enduml

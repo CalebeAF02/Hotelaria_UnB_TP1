@@ -16,7 +16,7 @@ namespace Hotelaria {
 
         virtual void exibirMenuCRUD() = 0;
 
-        virtual void criar() = 0;
+        virtual bool criar(int gerente_id, int hotel_id) = 0;
 
         virtual void listar() = 0;
 

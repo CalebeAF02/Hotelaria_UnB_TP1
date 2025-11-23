@@ -4,35 +4,40 @@
 
 #include "ControladoraServicoQuarto.hpp"
 
+#include "ControladoraPersistenciaQuarto.hpp"
+
 namespace Hotelaria {
     void ControladoraServicoQuarto::setControladoraPersistencia(InterfacePersistenciaQuarto *persistencia) {
         this->persistencia = persistencia;
     }
 
-    void ControladoraServicoQuarto::exibirMenu() {
-    }
-
-    void ControladoraServicoQuarto::exibirMenuCRUD() {
-    }
-
     bool ControladoraServicoQuarto::criar(const Quarto &quarto) {
-        return true;
+        if (!persistencia) persistencia = new ControladoraPersistenciaQuarto();
+        return persistencia->inserir(quarto);
     }
 
     bool ControladoraServicoQuarto::editar(const int &id, const Quarto &quarto) {
-        return true;
+        if (!persistencia) persistencia = new ControladoraPersistenciaQuarto();
+        return persistencia->atualizar(id, quarto);
     }
 
     bool ControladoraServicoQuarto::remover(const int &id) {
-        return true;
+        if (!persistencia) persistencia = new ControladoraPersistenciaQuarto();
+        return persistencia->excluir(id);
     }
 
     vector<QuartoDTO> ControladoraServicoQuarto::listarTodos() {
-        vector<QuartoDTO> lista;
-        return lista;
+        if (!persistencia) persistencia = new ControladoraPersistenciaQuarto();
+        return persistencia->listar();
     }
 
     optional<QuartoDTO> ControladoraServicoQuarto::pesquisar(const int &id) {
-        return nullopt;
+        if (!persistencia) persistencia = new ControladoraPersistenciaQuarto();
+        return persistencia->pesquisar(id);
+    }
+
+    int ControladoraServicoQuarto::getQuantidadeDeQuartosDoHotel(int hotel_id) {
+        if (!persistencia) persistencia = new ControladoraPersistenciaQuarto();
+        return persistencia->getQuantidadeDeQuartosDoHotel(hotel_id);
     }
 }

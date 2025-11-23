@@ -1,11 +1,12 @@
 #include "Hotel.hpp"
 
 namespace Hotelaria {
-    Hotel::Hotel(Nome nome, Endereco endereco, Telefone telefone, Codigo codigo) {
+    Hotel::Hotel(Nome nome, Endereco endereco, Telefone telefone, Codigo codigo, int gerente_id) {
         setNome(nome);
         setEndereco(endereco);
         setTelefone(telefone);
         setCodigo(codigo);
+        setGerenteId(gerente_id);
     };
 
     Hotel::Hotel(HotelDTO &hotel_dto) {
@@ -13,6 +14,7 @@ namespace Hotelaria {
         setEndereco(Endereco(hotel_dto.getEndereco()));
         setTelefone(Telefone(hotel_dto.getTelefone()));
         setCodigo(Codigo(hotel_dto.getCodigo()));
+        setGerenteId(hotel_dto.getGerenteID());
     };
 
     void Hotel::setNome(const Nome &newNome) {
@@ -46,4 +48,12 @@ namespace Hotelaria {
     string Hotel::getCodigo() const {
         return codigo.getValor();
     };
+
+    void Hotel::setGerenteId(const int &valor) {
+        this->gerente_id = valor;
+    }
+
+    int Hotel::getGerenteId() const {
+        return gerente_id;
+    }
 }

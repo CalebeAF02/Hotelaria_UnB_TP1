@@ -16,8 +16,6 @@ namespace Hotelaria {
     public:
         virtual bool inserir(const Hospede &hospede) = 0;
 
-        virtual bool autenticar(const string &email, const string &senha) = 0;
-
         virtual bool atualizar(const Email &email, const Hospede &hospede) = 0;
 
         virtual bool excluir(const int &id) = 0;
@@ -25,6 +23,10 @@ namespace Hotelaria {
         virtual vector<HospedeDTO> listar() = 0;
 
         virtual optional<HospedeDTO> pesquisar(const int &id) = 0;
+
+        virtual optional<HospedeDTO> pesquisarPorEmail(const string email) = 0;
+
+        virtual bool existeEmail(const string &email) = 0;
 
         virtual ~InterfacePersistenciaHospede() = default;
     };

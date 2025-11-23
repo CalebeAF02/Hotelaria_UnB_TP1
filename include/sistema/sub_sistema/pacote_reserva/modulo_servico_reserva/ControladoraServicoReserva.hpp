@@ -5,6 +5,7 @@
 #ifndef Hotelaria_UnB_TP1_CSRESERVA_HPP
 #define Hotelaria_UnB_TP1_CSRESERVA_HPP
 
+#include "ControladoraPersistenciaReserva.hpp"
 #include "InterfaceServicoReserva.hpp"
 #include "InterfacePersistenciaReserva.hpp"
 #include "ControladoraServicoReserva.hpp"
@@ -25,10 +26,6 @@ namespace Hotelaria {
 
     public:
         void setControladoraPersistencia(InterfacePersistenciaReserva *persistencia) override;
-
-        bool exibirMenu();
-
-        bool exibirMenuCRUD();
 
         bool criar(const Reserva &reserva) override;
 

@@ -9,7 +9,7 @@
 #include "EnumConversor.hpp"
 #include "SolicitacaoHospedagem.hpp"
 
-#include "BancoDeDados.hpp"
+#include "../banco/BancoDeDados.hpp"
 #include <vector>
 #include <string>
 #include <sqlite3.h>

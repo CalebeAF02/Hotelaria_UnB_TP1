@@ -26,7 +26,7 @@ namespace Hotelaria {
 
         virtual optional<GerenteDTO> pesquisarPorID(const int &id) = 0;
 
-        virtual optional<GerenteDTO> pesquisarPorEmail(const string &email) = 0;
+        virtual optional<GerenteDTO> pesquisarPorEmail(const string email) = 0;
 
         virtual bool existeEmail(const string &email) = 0;
 

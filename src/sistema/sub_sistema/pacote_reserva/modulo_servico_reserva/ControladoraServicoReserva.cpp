@@ -4,38 +4,33 @@
 
 #include "ControladoraServicoReserva.hpp"
 
-
 namespace Hotelaria {
     void ControladoraServicoReserva::setControladoraPersistencia(InterfacePersistenciaReserva *persistencia) {
         this->persistencia = persistencia;
     }
 
-    bool ControladoraServicoReserva::exibirMenu() {
-        return true;
-    };
-
-    bool ControladoraServicoReserva::exibirMenuCRUD() {
-        return true;
-    };
-
     bool ControladoraServicoReserva::criar(const Reserva &reserva) {
-        return true;
+        if (!persistencia) persistencia = new ControladoraPersistenciaReserva();
+        return persistencia->inserir(reserva);
     };
 
     bool ControladoraServicoReserva::editar(const int &id, const Reserva &reserva) {
-        return true;
+        if (!persistencia) persistencia = new ControladoraPersistenciaReserva();
+        return persistencia->atualizar(id, reserva);
     };
 
     bool ControladoraServicoReserva::remover(const int &id) {
-        return true;
+        if (!persistencia) persistencia = new ControladoraPersistenciaReserva();
+        return persistencia->excluir(id);
     };
 
     optional<ReservaDTO> ControladoraServicoReserva::pesquisar(const int &id) {
-        return nullopt;
+        if (!persistencia) persistencia = new ControladoraPersistenciaReserva();
+        return persistencia->pesquisar(id);
     };
 
     vector<ReservaDTO> ControladoraServicoReserva::listarTodos() {
-        vector<ReservaDTO> lista;
-        return lista;
+        if (!persistencia) persistencia = new ControladoraPersistenciaReserva();
+        return persistencia->listar();
     }
 }

@@ -27,10 +27,6 @@ namespace Hotelaria {
     public:
         void setControladoraPersistencia(InterfacePersistenciaQuarto *persistencia) override;
 
-        void exibirMenu();
-
-        void exibirMenuCRUD();
-
         bool criar(const Quarto &quarto) override;
 
         bool editar(const int &id, const Quarto &quarto) override;
@@ -40,6 +36,8 @@ namespace Hotelaria {
         vector<QuartoDTO> listarTodos() override;
 
         optional<QuartoDTO> pesquisar(const int &id) override;
+
+        int getQuantidadeDeQuartosDoHotel(int hotel_id) override;
     };
 }
 

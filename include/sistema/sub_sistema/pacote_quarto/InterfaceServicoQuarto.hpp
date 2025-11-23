@@ -33,6 +33,8 @@ namespace Hotelaria {
 
         virtual optional<QuartoDTO> pesquisar(const int &id) = 0;
 
+        virtual int getQuantidadeDeQuartosDoHotel(int hotel_id) =0;
+
         virtual ~InterfaceServicoQuarto() = default;
     };
 }

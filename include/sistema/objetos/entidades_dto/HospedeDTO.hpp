@@ -12,7 +12,7 @@ using namespace std;
 namespace Hotelaria {
     class HospedeDTO {
     private:
-        int id_hospede;
+        int id;
         string nome;
         string email;
         string endereco;
@@ -21,7 +21,7 @@ namespace Hotelaria {
     public:
         HospedeDTO() = default;
 
-        HospedeDTO(int id_hospede, string nome, string email, string endereco, string cartao) : id_hospede(id_hospede),
+        HospedeDTO(int id, string nome, string email, string endereco, string cartao) : id(id),
             nome(nome), email(email), endereco(endereco), cartao(cartao) {
         };
 
