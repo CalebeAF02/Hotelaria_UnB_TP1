@@ -103,17 +103,17 @@ O sistema simula um **gerenciador de hotel**, permitindo:
 ## 📂 Estrutura do Projeto
 
 Hotelaria_UnB_TP1/
-├── docs/ # Documentação gerada (HTML/LaTeX/Imagens)
-├── include/ # Headers (.hpp) da aplicação
+├── docs/ #Documentação gerada (HTML/LaTeX/Imagens)
+├── include/ #Headers (.hpp) da aplicação
 │ ├── HACKER/
 │ │ └── SistemaHacker.hpp
 │ └── sistema/
 │ ├── banco/
 │ │ └── BancoDeDados.hpp
 │ ├── objetos/
-│ │ ├── dominios/ # Tipos de valor com validação (Nome, Email, Senha, etc.)
-│ │ ├── entidades/ # Pessoa, Gerente, Hospede, Hotel, Quarto, Reserva, SolicitacaoHospedagem
-│ │ ├── entidades_dto/ # DTOs correspondentes
+│ │ ├── dominios/ #Tipos de valor com validação (Nome, Email, Senha, etc.)
+│ │ ├── entidades/ #Pessoa, Gerente, Hospede, Hotel, Quarto, Reserva, SolicitacaoHospedagem
+│ │ ├── entidades_dto/ #DTOs correspondentes
 │ │ └── sub_sistema/
 │ │ ├── ControladoraPersistenciaSolicitacaoHospedagem.hpp
 │ │ ├── pacote_acesso/
@@ -187,20 +187,20 @@ Hotelaria_UnB_TP1/
 │ │ └── modulo_servico_reserva/
 │ │ └── ControladoraServicoReserva.hpp
 │ └── utilitarios/
-│ ├── enum/ # Modos.hpp
+│ ├── enum/ #Modos.hpp
 │ ├── Utils.hpp
 │ ├── AplicacaoSistema.hpp
 │ ├── Sistema.hpp
 │ ├── SistemaSessao.hpp
 │ └── Versao.hpp
-├── libs/ # Bibliotecas e componentes reutilizáveis
-│ ├── formato/ # Formato.cpp/.hpp
-│ ├── io/ # IO.cpp/.hpp
-│ ├── menu/ # Menu, MenuCRUD, MenuItem, ExibirMenu
-│ ├── sqlite/ # sqlite3.c/.h (embutido)
-│ ├── tabela/ # Atributo, Linha, Tabela, TamanhoAtributo
-│ └── teste/ # SmokeTeste, InterfaceDeTestes
-├── src/ # Implementações (.cpp) — espelha include/ quando aplicável
+├── libs/ #Bibliotecas e componentes reutilizáveis
+│ ├── formato/ #Formato.cpp/.hpp
+│ ├── io/ #IO.cpp/.hpp
+│ ├── menu/ #Menu, MenuCRUD, MenuItem, ExibirMenu
+│ ├── sqlite/ #sqlite3.c/.h (embutido)
+│ ├── tabela/ #Atributo, Linha, Tabela, TamanhoAtributo
+│ └── teste/ #SmokeTeste, InterfaceDeTestes
+├── src/ #Implementações (.cpp) — espelha include/ quando aplicável
 │ ├── HACKER/SistemaHacker.cpp
 │ └── sistema/sub_sistema/
 │ ├── ControladoraPersistenciaSolicitacaoHospedagem.cpp
@@ -253,15 +253,13 @@ Hotelaria_UnB_TP1/
 │ │ └── ControladoraPersistenciaReserva.cpp
 │ └── modulo_servico_reserva/
 │ └── ControladoraServicoReserva.cpp
-├── meta/ # Tema Doxygen Awesome e customizações (CSS/JS/header)
+├── meta/ #Tema Doxygen Awesome e customizações (CSS/JS/header)
 ├── testes/
-│ ├── testes_dominios/ # Testes por domínio
-│ └── testes_entidades/ # Testes por entidade
+│ ├── testes_dominios/ #Testes por domínio
+│ └── testes_entidades/ #Testes por entidade
 ├── Doxyfile
 ├── gerar_documentacao.bat
 └── README.md
-
-
 
 ---
 
@@ -276,37 +274,42 @@ Nome nome("Calebe"); // valido
 Email email("email@invalido"); // lança exceção  
 Senha senha("123"); // lança exceção se nao atender aos critérios
 
-### 🔹 Utilitários Genéricos
-
-Algumas validações genéricas ainda são mantidas para entradas livres:
-
-- ValidarString → valida strings genéricas (menus, comandos)
-- ValidarInt → valida inteiros fora dos domínios
-
 ---
 
 ## 🧪 Testes
 
-- TesteValidadores: conjunto de testes unitários para verificar os domínios
-- Contadores estáticos para monitorar execução:
-- contTotalTestes
-- contTotalTestesOk
-- contTotalTestesProblema
+- testes_dominios/ → Testes unitários por tipo de dado
+
+- testes_entidades/ → Testes por entidade
+
+- libs/teste/ → SmokeTeste e InterfaceDeTestes
+
+- Contadores estáticos:
+
+    - contTotalTestes
+
+    - contTotalTestesOk
+
+    - contTotalTestesProblema
 
 ---
 
 ## 🛠️ Como Compilar
 
-mkdir build && cd build  
-cmake ..  
-make  
+```bash
+mkdir build && cd build
+cmake ..
+make
 ./gerenciador_hotel_unb
+```
 
-Este projeto já inclui o SQLite como biblioteca estática:
+- Este projeto já inclui o SQLite como biblioteca estática:
 
-- libs/sqlite/sqlite3.h → cabeçalho da API
-- libs/extern/libsqlite3.a → biblioteca compilada
-  Nenhuma instalação externa é necessária. Basta clonar e compilar.
+    - libs/sqlite/sqlite3.h → cabeçalho da API
+
+    - libs/sqlite/sqlite3.c → implementação embutida
+
+- Nenhuma instalação externa é necessária. Basta clonar e compilar.
 
 ---
 
@@ -316,7 +319,7 @@ Se você deseja colaborar com o projeto, siga estas etapas:
 
 1. Clone o repositório :
    git clone https://github.com/CalebeAF02/Gerenciador-De-Hoteis---UNB.git
-   cd Gerenciador-De-Hoteis---UNB
+   cd Hotelaria_UnB_TP1
 
 2. Crie uma branch :
 
@@ -340,27 +343,106 @@ Se você deseja colaborar com o projeto, siga estas etapas:
 
 ## 📚 Próximos Passos
 
-- Finalizar função de atualização de gerente
-- Implementar persistência para hóspedes e solicitações
-- Criar exportação de dados para .tsv ou .csv
-- Ampliar cobertura dos testes
-- Migrar para interface gráfica (Qt ou Web)
+Reserva: implementar CRUD completo e validar disponibilidade de quartos.
+
+Solicitação de Hospedagem: corrigir persistência e fluxo de atualização.
+
+Autenticação: integrar com persistência real de gerentes.
+
+Sessão: reforçar restrições de acesso por gerente/hotel.
+
+Testes: ampliar cobertura para reservas e solicitações.
+
+Exportação de dados: implementar saída para .csv ou .tsv.
+
+Interface gráfica: migrar futuramente para Qt ou Web.
+
+Documentação: expandir exemplos de uso e diagramas UML.
+
+    
+---
+
+## 🛠️ O que falta implementar
+
+    🔎 Situação atual
+
+        - O pacote_reserva já possui:
+
+            - Interfaces (InterfaceApresentacaoReserva.hpp, InterfacePersistenciaReserva.hpp, InterfaceServicoReserva.hpp)
+        
+            - Controladoras nos três módulos (ControladoraApresentacaoReserva, ControladoraPersistenciaReserva, ControladoraServicoReserva)
+        
+        - Porém, a persistência está apenas esboçada (métodos stub retornando valores fixos).
+        
+        - O fluxo de reserva ainda não está integrado com o restante do sistema (hotel, quarto, hóspede).
+
+1. Persistência (ControladoraPersistenciaReserva)
+
+       - Criar tabela reservas no SQLite (se ainda não existir).
+       
+       - Métodos:
+       
+           - inserir(const Reserva &reserva)
+           
+           - atualizar(const Reserva &reserva)
+           
+           - excluir(int id)
+           
+           - listar() -> vector<ReservaDTO>
+           
+           - pesquisarPorID(int id)
+           
+           - Usar sqlite3_prepare_v2, sqlite3_bind_* e sqlite3_step como já feito em ControladoraPersistenciaGerente.
+
+2. Serviço (ControladoraServicoReserva)
+
+       - Delegar para a persistência.
+
+       - Validar regras de negócio:
+           
+           - Verificar se o quarto está disponível no período (chegada/partida).
+
+           - Garantir que o hóspede existe.
+
+           - Garantir que o hotel/quarto existem.
+
+       - Retornar bool ou optional<ReservaDTO> conforme o caso.
+
+3. Apresentação (ControladoraApresentacaoReserva)
+
+       - Menu CRUD de reservas:
+
+           - Criar reserva (coletar hóspede_id, hotel_id, quarto_id, datas).
+
+           - Listar reservas.
+
+           - Atualizar reserva.
+
+           - Remover reserva.
+
+       - Exibir feedback claro (sucesso/erro).
+
+4. Integração com sessão (SistemaSessao)
+
+       - Usar gerente_id e hotel_id ativos para restringir operações.
+
+       - Exemplo: gerente só pode manipular reservas do seu hotel.
 
 ---
 
-##🎯 Objetivo Educacional
+## 🎯 Objetivo Educacional
 
 Este projeto visa aplicar conceitos de POO em C++ moderno, com foco em:
 
 - Herança e Polimorfismo
 - Encapsulamento
 - Tratamento de exceções
-- Arquitetura limpa e boas práticas
+- Arquitetura em camadas, limpa e boas práticas
 - Persistência com banco de dados
 
 ---
 
-##👤 Autores
+## 👤 Autores
 
 Projeto desenvolvido por:
 
