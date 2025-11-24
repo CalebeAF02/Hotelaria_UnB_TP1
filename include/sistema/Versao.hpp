@@ -9,8 +9,8 @@ using namespace std;
 namespace Hotelaria {
     class Versao {
     private:
-        static constexpr uint64_t valor = 236;
-        static inline const string data = "2025-11-23 20:46";
+        static constexpr uint64_t valor = 239;
+        static inline const string data = "2025-11-23 21:12";
 
     public:
         static uint8_t patch() { return valor % 10; }

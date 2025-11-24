@@ -24,13 +24,13 @@ namespace Hotelaria {
         return persistencia->excluir(id);
     };
 
-    optional<ReservaDTO> ControladoraServicoReserva::pesquisar(const int &id) {
-        if (!persistencia) persistencia = new ControladoraPersistenciaReserva();
-        return persistencia->pesquisar(id);
-    };
-
     vector<ReservaDTO> ControladoraServicoReserva::listarTodos() {
         if (!persistencia) persistencia = new ControladoraPersistenciaReserva();
         return persistencia->listar();
     }
+
+    optional<ReservaDTO> ControladoraServicoReserva::pesquisar(const int &id) {
+        if (!persistencia) persistencia = new ControladoraPersistenciaReserva();
+        return persistencia->pesquisar(id);
+    };
 }

@@ -16,8 +16,6 @@ namespace Hotelaria {
     public:
         virtual bool inserir(const Reserva &reserva) = 0;
 
-        virtual bool autenticar(const string &email, const string &senha) = 0;
-
         virtual bool atualizar(const int &id, const Reserva &reserva) = 0;
 
         virtual bool excluir(const int &id) = 0;

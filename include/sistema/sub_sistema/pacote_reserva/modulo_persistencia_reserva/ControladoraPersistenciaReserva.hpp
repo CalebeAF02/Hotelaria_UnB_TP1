@@ -25,8 +25,6 @@ namespace Hotelaria {
     public:
         bool inserir(const Reserva &reserva) override;
 
-        bool autenticar(const string &email, const string &senha) override;
-
         bool atualizar(const int &id, const Reserva &reserva) override;
 
         bool excluir(const int &id) override;
